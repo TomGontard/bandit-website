@@ -1,11 +1,10 @@
-// next.config.js
-/** @type {import('next').NextConfig} */
+// next.config.ts
 const nextConfig = {
   reactStrictMode: true,
-  compiler: {
-    // active le transformateur styled-components pour Next.js ≥12
-    styledComponents: true,
+  compiler: { styledComponents: true },
+  experimental: {
+    appDir: false,    // valid au runtime
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
