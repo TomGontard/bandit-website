@@ -2,7 +2,7 @@
 import styled, { keyframes } from 'styled-components';
 
 const fadeInUp = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(300px); }
   to   { opacity: 1; transform: translateY(0); }
 `;
 
@@ -16,8 +16,9 @@ interface ImgProps {
 
 const Img = styled.img<ImgProps>`
   width: ${({ size }) => size};
-  animation: ${fadeInUp} 0.6s ease forwards;
+  animation: ${fadeInUp} 5s ease forwards;
   animation-delay: ${({ delay }) => delay}ms;
+  opacity: 0;
 
   @media (min-width: 640px) {
     width: ${({ mdSize, size }) =>
