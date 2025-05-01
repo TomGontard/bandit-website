@@ -94,7 +94,7 @@ const bandits: BanditPos[] = [
   {
     src: '/assets/images/bandits/BANDIT1.png',
     alt: 'Bandit 1',
-    delay: 0,
+    delay: 500,
     smsize: '300px',
     smleft: '-35%',
     smbottom: '-180%',
@@ -113,7 +113,7 @@ const bandits: BanditPos[] = [
   {
     src: '/assets/images/bandits/BANDIT2.png',
     alt: 'Bandit 2',
-    delay: 500,
+    delay: 1000,
     smsize: '300px',
     smleft: '30%',
     smbottom: '-60%',
@@ -132,7 +132,7 @@ const bandits: BanditPos[] = [
   {
     src: '/assets/images/bandits/BANDIT3.png',
     alt: 'Bandit 3',
-    delay: 1000,
+    delay: 0,
     smsize: '300px',
     smleft: '35%',
     smbottom: '-210%',
@@ -151,7 +151,7 @@ const bandits: BanditPos[] = [
   {
     src: '/assets/images/bandits/BANDIT4.png',
     alt: 'Bandit 4',
-    delay: 1500,
+    delay: 1000,
     smsize: '300px',
     mdSize: '120px',
     smleft: '-40%',
@@ -170,7 +170,7 @@ const bandits: BanditPos[] = [
   {
     src: '/assets/images/bandits/BANDIT5.png',
     alt: 'Bandit 5',
-    delay: 2000,
+    delay: 500,
     smsize: '80px',
     mdSize: '120px',
     smleft: '50%',
