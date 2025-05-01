@@ -5,21 +5,105 @@ import Layout from '../components/Layout';
 import BanditCard from '../components/BanditCard';
 import useWindowSize from '../hooks/useWindowSize';
 
+const ButtonWrapper = styled.div`
+  position: absolute;
+  display: inline-block;     /* shrink-to-fit content */
+  bottom: 55%;
+  z-index: 10;
+  @media (min-width: 640px) and (max-width: 1024px) {
+    bottom: 60%;
+  }
+  @media (min-width: 1024px) and (max-width: 1600px) {
+    font-size: 50px;
+  }
+  @media (min-width: 1600px) {
+    font-size: 60px;
+  }
+`
+
+const ButtonFrame = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;       /* clicks go “through” to the real button */
+  width: 200px;               /* or whatever fits your design */
+  height: auto;
+  z-index: 0;
+`
+
 const CTAButton = styled.button`
-  margin-top: 2rem;
-  padding: 0.8rem 2rem;
-  font-size: 1.2rem;
-  background: #e63946;
+  position: relative;
+  z-index: 1;
+  background: transparent;
   border: none;
   color: #fff;
+  padding: 20px 40px;
+  font-size: 50px;
   cursor: pointer;
-  transition: transform 0.2s ease;
-  Z-index: 10;
+  transition: transform 0.5s ease;
+  
+  /* 3) text-shadow to boost readability */
+  text-shadow: 0px 16px 32px rgb(0, 0, 0);
+
+  /* 4) drop-shadow filter if you want a glow under the whole element */
+  filter: drop-shadow(20px 20px 40px rgb(0, 0, 0));
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.15);
   }
-`;
+
+  @media (max-width: 375px) {
+    font-size: 40px;
+  }
+  @media (min-width: 375px) and (max-width: 640px) {
+    font-size: 42.5px;
+  }
+  @media (min-width: 640px) and (max-width: 1024px) {
+    font-size: 45px;
+  }
+  @media (min-width: 1024px) and (max-width: 1600px) {
+    font-size: 50px;
+  }
+  @media (min-width: 1600px) {
+    font-size: 60px;
+  }
+`
+
+const Subtitle = styled.p`
+  position: absolute;
+  font-size: 50px;
+  line-height: 1.4;
+  text-align: center;
+  top: 3%;
+  Z-index: 10;
+  padding: 0 5%;
+  @media (max-width: 375px) {
+    font-size: 15px;
+    padding: 0 2.5%;
+  }
+  @media (min-width: 375px) and (max-width: 640px) {
+    font-size: 17.5px;
+    top: 2%;
+    padding: 0 2.5%;
+  }
+  @media (min-width: 640px) and (max-width: 850px) {
+    font-size: 30px;
+    padding: 0 2.5%;
+  }
+  @media (min-width: 850px) and (max-width: 1024px) {
+    font-size: 32.5px;
+    padding: 0 2.5%;
+    top: 5%;
+  }
+  @media (min-width: 1024px) and (max-width: 1600px) {
+    font-size: 45px;
+    top: 6.5%;
+  }
+  @media (min-width: 1600px) {
+    font-size: 60px;
+  }
+`
 
 /** 2) Container relatif pour positionner les Bandits */
 const BanditsContainer = styled.div`
@@ -205,6 +289,16 @@ export default function Home() {
 
   return (
     <Layout>
+      <Subtitle>
+        NFT collection of 432 unique rebels on Monad<br/>
+        Scarred, stylish and unstoppable.
+      </Subtitle>
+      <ButtonWrapper>
+        <ButtonFrame src={"../assets/images/around_btn.png"} alt="" />
+          <CTAButton onClick={() => router.push('/navigation')}>
+            ENTER THE HIDEOUT
+          </CTAButton>
+      </ButtonWrapper>
       <BanditsContainer>
         {visibleBandits.map((b, i) => (
           <AbsoluteWrapper
@@ -232,10 +326,6 @@ export default function Home() {
           </AbsoluteWrapper>
         ))}
       </BanditsContainer>
-
-      <CTAButton onClick={() => router.push('/navigation')}>
-        JOIN THE GANG
-      </CTAButton>
     </Layout>
   )
 }
