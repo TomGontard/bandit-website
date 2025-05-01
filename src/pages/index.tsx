@@ -30,7 +30,6 @@ const ButtonFrame = styled.img`
   width: 200px;               /* or whatever fits your design */
   height: auto;
   z-index: 0;
-  background-image: url('/assets/images/countouring.png');
 `
 
 const CTAButton = styled.button`
@@ -191,7 +190,7 @@ const bandits: BanditPos[] = [
     lgBottom: '15%',
     xlSize: '525px',
     xlLeft: '-2.5%',
-    xlBottom: '20%',
+    xlBottom: '0',
     zIndex: 4,
     visibleAt: ['sm', 'md', 'lg', 'xl'],
   },
