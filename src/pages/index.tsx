@@ -30,6 +30,7 @@ const ButtonFrame = styled.img`
   width: 200px;               /* or whatever fits your design */
   height: auto;
   z-index: 0;
+  background-image: url('/assets/images/countouring.png');
 `
 
 const CTAButton = styled.button`
