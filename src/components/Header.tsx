@@ -14,12 +14,23 @@ const Bar = styled.header`
   justify-content: space-between;
   background: transparent;
   z-index: 20;
+    @media (max-width: 640px) {
+        max-height: 200px;
+    }
+    @media (max-width: 1024px) {
+        max-height: 250px;
+        flex-direction: column;
+        padding: 2.5%;
+    }
 `;
 
 const Left = styled.div`
   display: flex;
   flex: 1;
   align-items: center;
+  @media (max-width: 1024px) {
+    display: none;
+  }
 `;
 
 const Middle = styled.div`
@@ -28,9 +39,15 @@ const Middle = styled.div`
   text-align: center;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  gap: 25px;
   padding-top: 2.5%;
+  @media (max-width: 640px) {
+    width: 100%;
+    padding: 5%;
+  }
+  @media (min-width: 640px) and (max-width: 1024px) {
+    width: 100%;
+    padding: 2.5%;
+  }
 `;
 
 const Right = styled.div`
@@ -42,6 +59,20 @@ const Right = styled.div`
   flex-direction: column;
   padding-top: 2.5%;
   gap: 30px;
+  @media (max-width: 640px) {
+    width: 100%;
+    padding: 5%;
+    flex-direction: row;
+    justify-content: center;    
+    gap: 100px;
+  }
+  @media (min-width: 640px) and (max-width: 1024px) {
+    width: 100%;
+    padding: 2%;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10%;
+  }
 `;
 
 const FaviconLogo = styled.img`
@@ -49,20 +80,33 @@ const FaviconLogo = styled.img`
   cursor: pointer;
   transition: transform .35s;
   &:hover { transform: scale(1.15); }
-  /* …media queries… */
 `;
 const BanditLogo = styled.img`
-    width: 50%;
+    width: 75%;
     cursor: pointer;
     transition: transform .5s;
     &:hover { transform: scale(1.5); }
-    /* … */
+    @media (max-width: 640px) {
+        width: 300px;
+        padding: 2.5%;
+        &:hover { transform: scale(1.2); }
+    }
+    @media (min-width: 640px) and (max-width: 1024px) {
+        width: 70%;
+        &:hover { transform: scale(1.25); }
+    }
 `;
 const SocialIcon = styled.img`
   width: 12.5%;
   cursor: pointer;
   transition: transform .25s;
   &:hover { transform: scale(1.25); }
+    @media (max-width: 640px) {
+        width: 50px;
+    }
+    @media (min-width: 640px) and (max-width: 1024px) {
+        width: 20%;
+    }
 `;
 
 export default function Header() {
@@ -84,10 +128,6 @@ export default function Header() {
             alt="Bandit"
           />
         </Link>
-        <p>
-          NFT collection of 432 unique rebels on Monad<br/>
-          Scarred, stylish and unstoppable.
-        </p>
       </Middle>
 
           <Right>
