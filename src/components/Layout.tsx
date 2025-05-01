@@ -45,11 +45,11 @@ const FlamesBg = styled.img`
 // Contenu au-dessus des flammes
 const Main = styled.main`
   position: relative;
+  height: 100%;
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
 `;
 
 type Props = { children: ReactNode };

@@ -25,12 +25,7 @@ const CTAButton = styled.button`
 const BanditsContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 200px;            /* mobile: hauteur minimale */
-  margin: 2rem 0;
-
-  @media (min-width: 1024px) {
-    height: 300px;          /* desktop: plus de place verticale */
-  }
+  height: 100%;
 `;
 
 interface WrapperProps {
@@ -107,11 +102,11 @@ const bandits: BanditPos[] = [
     mdLeft: '-10%',
     mdBottom: '-500%',
     lgSize: '350px',
-    lgLeft: '-2.5%',
-    lgBottom: '-70%',
+    lgLeft: '-1%',
+    lgBottom: '10%',
     xlSize: '475px',
-    xlLeft: '-3.5%',
-    xlBottom: '-100%',
+    xlLeft: '-1%',
+    xlBottom: '15%',
     zIndex: 4,
     visibleAt: ['sm', 'md', 'lg', 'xl'],
   },
@@ -125,12 +120,12 @@ const bandits: BanditPos[] = [
     mdSize: '120%',
     mdLeft: '40%',
     mdBottom: '-275%',
-    lgLeft: '15%',
-    lgBottom: '-90%',
+    lgLeft: '17%',
+    lgBottom: '10%',
     lgSize: '350px',
     xlSize: '450px',
-    xlLeft: '15%',
-    xlBottom: '-120%',
+    xlLeft: '17%',
+    xlBottom: '12.5%',
     zIndex: 2,
     visibleAt: ['sm', 'md', 'lg', 'xl'],
   },
@@ -144,12 +139,12 @@ const bandits: BanditPos[] = [
     mdSize: '120%',
     mdLeft: '40%',
     mdBottom: '-525%',
-    lgBottom: '-75%',
-    lgLeft: '35%',
     lgSize: '400px',
+    lgLeft: '36.5%',
+    lgBottom: '10%',
     xlSize: '550px',
     xlLeft: '35%',
-    xlBottom: '-110%',
+    xlBottom: '15%',
     zIndex: 3,
     visibleAt: ['sm', 'md', 'lg', 'xl'],
   },
@@ -163,12 +158,12 @@ const bandits: BanditPos[] = [
     smbottom: '-60%',
     mdLeft: '50%',
     mdBottom: '0',
-    lgBottom: '-85%',
-    lgLeft: '58%',
     lgSize: '350px',
+    lgLeft: '60%',
+    lgBottom: '10%',
     xlSize: '475px',
-    xlLeft: '58%',
-    xlBottom: '-120%',
+    xlLeft: '55%',
+    xlBottom: '15%',
     zIndex: 1,
     visibleAt: ['sm', 'md', 'lg', 'xl'],
   },
@@ -182,12 +177,12 @@ const bandits: BanditPos[] = [
     mdLeft: '50%',
     smbottom: '0',
     mdBottom: '0',
-    lgBottom: '-80%',
-    lgLeft: '78%',
     lgSize: '350px',
+    lgLeft: '78%',
+    lgBottom: '10%',
     xlSize: '500px',
-    xlLeft: '77%',
-    xlBottom: '-120%',
+    xlLeft: '76%',
+    xlBottom: '18%',
     zIndex: 3,
     visibleAt: ['md', 'lg', 'xl'],
   }
