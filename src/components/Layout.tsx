@@ -10,26 +10,36 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
   }
+
+  html, body, #__next {
+    height: 100%;
+  }
+
   body {
     background: #000;
     color: #fff;
     font-family: 'Arial', sans-serif;
+    overflow: hidden; 
   }
 `;
+
 
 // Conteneur principal
 const Container = styled.div`
   position: relative;
-  min-height: 100vh;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
 `;
 
 // Fond de flammes (statique)
-const FlamesBg = styled.div`
-  position: absolute;
+const FlamesBg = styled.img`
+  width: 100%;
+  height: 100%;
   inset: 0;
-  background: url('../../public/assets/images/flames.svg') no-repeat center/cover;
+  object-fit: cover; 
+  position: absolute;
   z-index: 0;
+  filter: blur(6px); 
 `;
 
 // Contenu au-dessus des flammes
@@ -49,7 +59,7 @@ export default function Layout({ children }: Props) {
       <Header />
       <GlobalStyle />
       <Container>
-        <FlamesBg />
+        <FlamesBg src="/assets/images/flames.svg" />
         <Main>{children}</Main>
       </Container>
     </>
