@@ -1,23 +1,38 @@
 // src/pages/index.tsx
 import { useRouter } from 'next/router';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import Layout from '../components/Layout';
 import BanditCard from '../components/BanditCard';
 import useWindowSize from '../hooks/useWindowSize';
+import { useState } from 'react';
 
 const fadeIn = keyframes`
   from {opacity: 0;}
   to {opacity: 1;}
 `
 
-const ButtonWrapper = styled.div`
+const fadeOut = keyframes`
+  from {opacity: 1;}
+  to {opacity: 0;}
+`
+
+const fadeOutBandits = keyframes`
+  from {opacity: 1; transform: translateY(0);}
+  to {opacity: 0; transform: translateY(300px);}
+`
+
+const ButtonWrapper = styled.div<{ exiting?: boolean }>`
   position: absolute;
   display: inline-block;     /* shrink-to-fit content */
   bottom: 47.5%;
   z-index: 100;
   opacity:0;
-  animation: ${fadeIn} 2s ease forwards;
-  animation-delay: 2s;
+  opacity: 0;
+  animation: 
+    ${p => p.exiting 
+        ? css`${fadeOut} 2s ease forwards`
+        : css`${fadeIn} 2s ease forwards`}; 
+  animation-delay: ${p => p.exiting ? '0s' : '2s'};
 
   transition: transform 0.5s ease;
   &:hover {
@@ -144,6 +159,7 @@ interface WrapperProps {
   xlBottom?: string;
   zIndex: number;
   scale?: number;
+  exiting?: boolean;
 }
 
 const AbsoluteWrapper = styled.div<WrapperProps>`
@@ -152,6 +168,10 @@ const AbsoluteWrapper = styled.div<WrapperProps>`
   bottom: ${({ bottom }) => bottom};
   z-index: ${({ zIndex }) => zIndex};
   transform: ${({ scale = 1 }) => `scale(${scale})`};
+  ${p => p.exiting && css`
+    animation: ${fadeOutBandits} 2s ease forwards;
+    animation-delay: 0s;
+  `}
 
   @media (min-width: 640px) {
     left: ${({ mdLeft, left }) => mdLeft ?? left};
@@ -296,6 +316,7 @@ const bandits: BanditPos[] = [
 // your existing styled‐components (Title, CTAButton, BanditsContainer, AbsoluteWrapper) stay the same
 
 export default function Home() {
+  const [exiting, setExiting] = useState(false)
   const router = useRouter()
   const { width = 0 } = useWindowSize()
 
@@ -314,10 +335,13 @@ export default function Home() {
         A NFT collection of 432 unique rebels on Monad<br/>
         Scarred, stylish and unstoppable.
       </Subtitle>
-      <ButtonWrapper>
+      <ButtonWrapper exiting={exiting}>
         <BlurImage src={"../assets/images/blur.svg"} alt="" />
         <ButtonFrame src={"../assets/images/around-button.svg"} alt="" />
-          <CTAButton onClick={() => router.push('/navigation')}>
+        <CTAButton onClick={() => {
+          setExiting(true)
+          setTimeout(() => router.push('/navigation'), 1500)
+        }}>
             ENTER THE HIDEOUT
           </CTAButton>
       </ButtonWrapper>
@@ -335,6 +359,7 @@ export default function Home() {
             xlBottom={b.xlBottom}
             zIndex={b.zIndex}
             scale={width > 2000 ? 1.5 : 1}
+            exiting={exiting}
           >
             <BanditCard
               src={b.src}
