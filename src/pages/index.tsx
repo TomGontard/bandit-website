@@ -45,7 +45,7 @@ const ButtonWrapper = styled.div<{ exiting?: boolean }>`
   position: absolute;
   display: inline-block;     /* shrink-to-fit content */
   bottom: 47.5%;
-  z-index: 100;
+  z-index: 10;
   opacity:0;
   opacity: 0;
   animation: 
@@ -78,6 +78,19 @@ const ButtonFrame = styled.img`
   pointer-events: none;       /* clicks go “through” to the real button */
   width: 110%;               /* or whatever fits your design */
   z-index: 11;
+
+  @media (max-width: 639px) {
+    width: 95vw;
+  }
+  @media (min-width: 640px) and (max-width: 1024px) {
+    bottom: 60%;
+  }
+  @media (min-width: 1024px) and (max-width: 1600px) {
+    font-size: 50px;
+  }
+  @media (min-width: 1600px) {
+    font-size: 60px;
+  }
 `
 
 const BlurImage = styled.img`
@@ -90,6 +103,16 @@ const BlurImage = styled.img`
   width: 174%;
   height: auto;
   object-fit: fill;
+  @media (max-width: 375px) {
+    top: -125%;
+    left: 52.5%;
+    z-index:6;
+  }
+  @media (min-width:376) and (max-width: 640px) {
+    top: -125%;
+    left: 52.5%;
+    z-index:6;
+  }
 `
 
 const CTAButton = styled.button`
@@ -110,10 +133,10 @@ const CTAButton = styled.button`
   filter: drop-shadow(20px 20px 40px rgb(0, 0, 0));
 
   @media (max-width: 375px) {
-    font-size: 40px;
+    font-size: 8vw;
   }
-  @media (min-width: 375px) and (max-width: 640px) {
-    font-size: 42.5px;
+  @media (min-width: 376px) and (max-width: 640px) {
+    font-size: 8vw;
   }
   @media (min-width: 640px) and (max-width: 1024px) {
     font-size: 45px;
@@ -135,8 +158,9 @@ const Subtitle = styled.p`
   Z-index: 10;
   padding: 0 5%;
   @media (max-width: 375px) {
-    font-size: 15px;
+    font-size: 17.5px;
     padding: 0 2.5%;
+    z-index: 11;
   }
   @media (min-width: 375px) and (max-width: 640px) {
     font-size: 17.5px;
