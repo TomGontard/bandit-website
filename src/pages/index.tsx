@@ -8,8 +8,14 @@ import useWindowSize from '../hooks/useWindowSize';
 const ButtonWrapper = styled.div`
   position: absolute;
   display: inline-block;     /* shrink-to-fit content */
-  bottom: 55%;
-  z-index: 10;
+  bottom: 47.5%;
+  z-index: 100;
+  transition: transform 0.5s ease;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+
   @media (min-width: 640px) and (max-width: 1024px) {
     bottom: 60%;
   }
@@ -24,34 +30,41 @@ const ButtonWrapper = styled.div`
 const ButtonFrame = styled.img`
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 52.5%;
   transform: translate(-50%, -50%);
   pointer-events: none;       /* clicks go “through” to the real button */
-  width: 200px;               /* or whatever fits your design */
+  width: 110%;               /* or whatever fits your design */
+  z-index: 11;
+`
+
+const BlurImage = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 52.5%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;       /* clicks go “through” to the real button */
+  z-index: 9;
+  width: 174%;
   height: auto;
-  z-index: 0;
+  object-fit: fill;
 `
 
 const CTAButton = styled.button`
   position: relative;
-  z-index: 1;
+  z-index: 10;
   background: transparent;
   border: none;
   color: #fff;
   padding: 20px 40px;
   font-size: 50px;
   cursor: pointer;
-  transition: transform 0.5s ease;
+    font-family: ${({ theme }) => theme.fonts.heading};
   
   /* 3) text-shadow to boost readability */
   text-shadow: 0px 16px 32px rgb(0, 0, 0);
 
   /* 4) drop-shadow filter if you want a glow under the whole element */
   filter: drop-shadow(20px 20px 40px rgb(0, 0, 0));
-
-  &:hover {
-    transform: scale(1.15);
-  }
 
   @media (max-width: 375px) {
     font-size: 40px;
@@ -190,7 +203,7 @@ const bandits: BanditPos[] = [
     lgBottom: '15%',
     xlSize: '525px',
     xlLeft: '-2.5%',
-    xlBottom: '0',
+    xlBottom: '15%',
     zIndex: 4,
     visibleAt: ['sm', 'md', 'lg', 'xl'],
   },
@@ -290,11 +303,12 @@ export default function Home() {
   return (
     <Layout>
       <Subtitle>
-        NFT collection of 432 unique rebels on Monad<br/>
+        A NFT collection of 432 unique rebels on Monad<br/>
         Scarred, stylish and unstoppable.
       </Subtitle>
       <ButtonWrapper>
-        <ButtonFrame src={"../assets/images/around_btn.png"} alt="" />
+        <BlurImage src={"../assets/images/blur.svg"} alt="" />
+        <ButtonFrame src={"../assets/images/around-button.svg"} alt="" />
           <CTAButton onClick={() => router.push('/navigation')}>
             ENTER THE HIDEOUT
           </CTAButton>

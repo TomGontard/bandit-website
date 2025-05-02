@@ -1,7 +1,9 @@
 // src/components/Layout.tsx
-import { ReactNode } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
-import Header from './Header';
+import { ReactNode } from 'react'
+import styled, { createGlobalStyle, ThemeProvider } from 'styled-components'
+import { theme } from '../utils/theme'
+import Header from './Header'
+
 
 const GlobalStyle = createGlobalStyle`
   /* Reset et police de base */
@@ -9,6 +11,24 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+  }
+
+  /* load Permanent Marker */
+  @font-face {
+    font-family: 'Permanent Marker';
+    src: url('/assets/fonts/PermanentMarker-Regular.ttf')
+         format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  /* load Bangers */
+  @font-face {
+    font-family: 'Bangers';
+    src: url('/assets/fonts/Bangers-Regular.ttf')
+         format('truetype');
+    font-weight: normal;
+    font-style: normal;
   }
 
   html, body, #__next {
@@ -19,7 +39,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     background: #000;
     color: #fff;
-    font-family: 'Arial', sans-serif;
+    font-family: ${({ theme }) => theme.fonts.body};
     overflow: hidden; 
   }
 `;
@@ -56,13 +76,13 @@ const Main = styled.main`
 type Props = { children: ReactNode };
 export default function Layout({ children }: Props) {
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <Header />
       <GlobalStyle />
       <Container>
         <FlamesBg src="/assets/images/flames.svg" />
         <Main>{children}</Main>
       </Container>
-    </>
+    </ThemeProvider>
   );
 }
