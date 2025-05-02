@@ -21,6 +21,26 @@ const fadeOutBandits = keyframes`
   to {opacity: 0; transform: translateY(300px);}
 `
 
+const bob = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+`
+
+const Bobbing = styled.div<{
+  fadeEnd: number
+  bobOffset: number
+}>`
+  animation-name:      ${bob};
+  animation-duration:  4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+
+  /* start the bob after fadeInUp (fadeEnd ms) + this card's extra offset */
+  animation-delay: ${({ fadeEnd, bobOffset }) =>
+    `${fadeEnd + bobOffset}ms`};
+`
+
 const ButtonWrapper = styled.div<{ exiting?: boolean }>`
   position: absolute;
   display: inline-block;     /* shrink-to-fit content */
@@ -346,32 +366,41 @@ export default function Home() {
           </CTAButton>
       </ButtonWrapper>
       <BanditsContainer>
-        {visibleBandits.map((b, i) => (
-          <AbsoluteWrapper
-            key={i}
-            left={b.smleft}
-            mdLeft={b.mdLeft}
-            lgLeft={b.lgLeft}
-            xlLeft={b.xlLeft}
-            bottom={b.smbottom}
-            mdBottom={b.mdBottom}
-            lgBottom={b.lgBottom}
-            xlBottom={b.xlBottom}
-            zIndex={b.zIndex}
-            scale={width > 2000 ? 1.5 : 1}
-            exiting={exiting}
-          >
-            <BanditCard
-              src={b.src}
-              alt={b.alt}
-              delay={b.delay}
-              size={b.smsize}
-              mdSize={b.mdSize}
-              lgSize={b.lgSize}
-              xlSize={b.xlSize}
-            />
-          </AbsoluteWrapper>
-        ))}
+        {visibleBandits.map((b, i) => {
+          // 600ms = duration of fadeInUp in your BanditCard
+          const fadeEnd = b.delay + 600
+          // stagger each by 500ms (you can tweak or even Math.random())
+          const bobOffset = i * 500
+
+          return (
+            <AbsoluteWrapper
+              key={i}
+              left={b.smleft}
+              mdLeft={b.mdLeft}
+              lgLeft={b.lgLeft}
+              xlLeft={b.xlLeft}
+              bottom={b.smbottom}
+              mdBottom={b.mdBottom}
+              lgBottom={b.lgBottom}
+              xlBottom={b.xlBottom}
+              zIndex={b.zIndex}
+              scale={width > 2000 ? 1.5 : 1}
+              exiting={exiting}
+            >
+              <Bobbing fadeEnd={fadeEnd} bobOffset={bobOffset}>
+                <BanditCard
+                  src={b.src}
+                  alt={b.alt}
+                  delay={b.delay}
+                  size={b.smsize}
+                  mdSize={b.mdSize}
+                  lgSize={b.lgSize}
+                  xlSize={b.xlSize}
+                />
+              </Bobbing>
+            </AbsoluteWrapper>
+          )
+        })}
       </BanditsContainer>
     </Layout>
   )
