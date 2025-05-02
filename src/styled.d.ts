@@ -1,4 +1,5 @@
 // src/styled.d.ts
+/* eslint-disable @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type */
 import 'styled-components'
 import type { Theme as ThemeType } from './utils/theme'
 
