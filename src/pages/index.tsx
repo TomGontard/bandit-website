@@ -1,17 +1,25 @@
 // src/pages/index.tsx
 import { useRouter } from 'next/router';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import Layout from '../components/Layout';
 import BanditCard from '../components/BanditCard';
 import useWindowSize from '../hooks/useWindowSize';
+
+const fadeIn = keyframes`
+  from {opacity: 0;}
+  to {opacity: 1;}
+`
 
 const ButtonWrapper = styled.div`
   position: absolute;
   display: inline-block;     /* shrink-to-fit content */
   bottom: 47.5%;
   z-index: 100;
-  transition: transform 0.5s ease;
+  opacity:0;
+  animation: ${fadeIn} 2s ease forwards;
+  animation-delay: 2s;
 
+  transition: transform 0.5s ease;
   &:hover {
     transform: scale(1.15);
   }
