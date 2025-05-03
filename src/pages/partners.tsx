@@ -37,7 +37,8 @@ const Inner = styled.div<{ transitioning: boolean }>`
   display: flex;
   gap: 5vw;
   transition: ${({ transitioning }) =>
-    transitioning ? 'transform 2s ease' : '0s'};
+    transitioning ? 'transform 1.5s ease' : '0s'};
+  will-change: transform;
 `
 
 export default function Partners() {
@@ -52,15 +53,15 @@ export default function Partners() {
     const [transitioning, setTransitioning] = useState(false)
     
   // Compute pixel measurements of gap & card width from vw
-  const cardGap   = width * 0.05    // 5vw
-  const cardWidth = width * 0.15    // 10vw
+  const cardGap   = width * 0.1    // 5vw
+  const cardWidth = width * 0.1    // 10vw
   const step      = cardWidth + cardGap
 
   // Helper to wrap indices around the ends
   const wrap = (i: number) => (i % total + total) % total
 
   // Always render these five slots relative to current
-  const windowOffsets = [-5, -4, -3, -2, -1, 0, +1, +2, +3, +4, +5]
+  const windowOffsets = [-4, -3, -2, -1, 0, +1, +2, +3, +4]
 
   // When a side‐slot is clicked:
   // - record how many slots (off) we’ll shift
@@ -98,34 +99,30 @@ export default function Partners() {
           onTransitionEnd={onTransitionEnd}
         >
           {windowOffsets.map((off, slotIdx) => {
-                const partner  = partners[ wrap(current + off) ]
+            const partner = partners[wrap(current + off)]
 
-                // distance from center slot
-                const dist = Math.abs(off)
+            /* how far from the (current) centre? */
+            const dist = Math.abs(off)
 
-                // linear ramp: 1.25 at dist=0 down to 0.75 at dist=2
-                let scale = 1.25 - 0.25 * dist
+            /* scale ramps 1.25 ➜ 1 ➜ 0.75 for dist 0 ➜ 1 ➜ ≥2 */
+            const scale = dist === 0
+              ? 1.25
+              : dist === 1
+              ? 1
+              : 0.75
 
-                // clamp between 0.75 and 1.25
-                scale = Math.max(0.75, Math.min(1.25, scale))
-
-                // hide beyond ±2 if you want:
-                // if (dist > 2) scale = 0
-
-                const isCenter = off === 0
-
-                return (
-                    <PartnerCard
-                    key={partner.name + off}
-                    logoSrc={partner.logo}
-                    name={partner.name}
-                    url={partner.url}
-                    scale={scale}
-                    clickable={isCenter}
-                    onClick={() => handleClick(slotIdx)}
-                    />
-                )
-            })}
+            return (
+              <PartnerCard
+                key={partner.name}
+                logoSrc={partner.logo}
+                name={partner.name}
+                url={partner.url}
+                scale={scale}
+                clickable={off === 0}
+                onClick={() => handleClick(slotIdx)}
+              />
+            )
+          })}
         </Inner>
       </CarouselWrapper>
     </Layout>
