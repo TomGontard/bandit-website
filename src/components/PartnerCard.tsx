@@ -17,7 +17,7 @@ const CardContainer = styled.div<{
 
   /* actually apply the scale and animate it */
   transform: scale(${p => p.scale});
-  transition: transform 0.5s ease;
+  transition: transform 1.5s ease;
 
   cursor: ${p => (p.clickable ? 'pointer' : 'default')};
 `
