@@ -30,6 +30,14 @@ const Logo = styled.img`
   &:hover {
     animation: ${bounce} 0.5s ease;
   }
+
+  @media (max-width: 640px) {
+    width: 60vw;    /* match this to how wide you render it */
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    width: 25vw;    /* match this to how wide you render it */
+  }
 `
 
 const Label = styled.span`

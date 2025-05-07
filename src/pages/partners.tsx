@@ -19,11 +19,14 @@ const partners = [
 ]
 
 const Title = styled.h2`
-  font-size: 4vw;
+  font-size: 5vw;
   color: #fff;
   text-align: center;
-  margin-top: 1vh;
+  margin-top: 2vh;
   font-family: 'Bangers', cursive;
+  @media (max-width: 1024px) {
+    font-size: 10vw;
+  }
 `
 
 const CarouselWrapper = styled.div`
@@ -39,6 +42,9 @@ const Inner = styled.div<{ transitioning: boolean }>`
   transition: ${({ transitioning }) =>
     transitioning ? 'transform 1.5s ease' : '0s'};
   will-change: transform;
+  @media (max-width: 1024px) {
+    gap: 8.5vw;
+  }
 `
 
 export default function Partners() {
@@ -54,10 +60,18 @@ export default function Partners() {
 
   /* 10 vw card + 10 vw gap  = 20 vw per step           */
   /* (you used 0.1×width for both)                      */
-  const step = width * 0.20
+  const step = width < 640            
+        ? width * 0.05                                   
+        : width < 1024                        
+        ? width * 0.30                         
+        : width * 0.20
 
   const wrap = (i: number) => (i % total + total) % total
-  const windowOffsets = [-4,-3,-2,-1,0,1,2,3,4]         // nine visible slots
+  const windowOffsets = width < 640            // phone  (<640 px)
+        ? [0]                                  // → only the centre card
+        : width < 1024                         // tablet (640-1023 px)
+        ? [-2,-1,0,+1,+2]                          // → 3 cards
+        : [-4,-3,-2,-1,0,1,2,3,4]         // nine visible slots
 
   function handleClick(slotIdx: number) {
     const off = windowOffsets[slotIdx]
