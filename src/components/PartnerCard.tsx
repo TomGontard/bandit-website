@@ -32,7 +32,7 @@ const Logo = styled.img`
   }
 
   @media (max-width: 640px) {
-    width: 60vw;    /* match this to how wide you render it */
+    width: 55vw;    /* match this to how wide you render it */
   }
 
   @media (min-width: 641px) and (max-width: 1024px) {
