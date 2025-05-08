@@ -24,7 +24,7 @@ const partners = [
   { name: 'LaMouch',      logo: '/assets/images/partners/lamouch.jpg',         url: 'https://x.com/LaMouchNFT' },
   { name: 'Amne',         logo: '/assets/images/partners/amne.png',            url: 'https://x.com/0xAmne' },
   { name: 'Antonio',      logo: '/assets/images/partners/antonio.png',         url: 'https://x.com/doudounads' },
-  { name: 'Clay Molandak',logo: '/assets/images/partners/clay-molandak.png',  url: 'https://x.com/realschism' },
+  { name: 'GTG',          logo: '/assets/images/partners/gtg.png',  url: 'https://x.com/realschism' },
   { name: 'Beholdak',     logo: '/assets/images/partners/beholdak.png',         url: 'https://x.com/beholdak' },
   { name: 'Lazy Llamas',  logo: '/assets/images/partners/lazyllama.png',        url: 'https://x.com/LazyLlamas_xyz' },
   { name: 'Deadnads',     logo: '/assets/images/partners/deadnads.png',         url: 'https://x.com/deadnads' },
