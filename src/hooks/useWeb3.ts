@@ -8,7 +8,7 @@ declare global {
 }
 
 // Remplacez 123 par l’ID numérique de votre testnet Monad
-const MONAD_TESTNET_CHAIN_ID = 123
+const MONAD_TESTNET_CHAIN_ID = 10143
 
 // petit alias pour typer l’erreur RPC
 interface RpcError extends Error {
@@ -26,7 +26,7 @@ export function useWeb3() {
       const target = {
         chainId: `0x${MONAD_TESTNET_CHAIN_ID.toString(16)}`,
         chainName: 'Monad Testnet',
-        rpcUrls: ['https://rpc-testnet.monad.xyz'],
+        rpcUrls: ['https://testnet-rpc.monad.xyz'],
         nativeCurrency: { name: 'MON', symbol: 'MON', decimals: 18 },
         blockExplorerUrls: ['https://testnet.monadexplorer.com/'],
       }
@@ -57,7 +57,7 @@ export function useWeb3() {
 
       if (useWalletConnect) {
         const wc = new WalletConnectProvider({
-          rpc: { [MONAD_TESTNET_CHAIN_ID]: 'https://rpc-testnet.monad.xyz' }
+          rpc: { [MONAD_TESTNET_CHAIN_ID]: 'https://testnet-rpc.monad.xyz' }
         })
         await wc.enable()
         rawProvider = wc as unknown as Eip1193Provider
