@@ -2,7 +2,7 @@
 import Link from "next/link";
 import styled from "styled-components";
 import { ROUTES, EXTERNAL_LINKS } from "../utils/links";
-import { useWeb3 } from "../hooks/useWeb3";
+import { useWeb3Context } from "../context/Web3Context";
 
 /** Styled-components */
 const Bar = styled.header`
@@ -152,7 +152,7 @@ const ConnectBtn = styled.button`
 `;
 
 export default function Header() {
-  const { account, connect, disconnect } = useWeb3();
+  const { account, connect, disconnect } = useWeb3Context();
 
   // helper to truncate: 0x + first 4 + … + last 4
   const truncated = (addr: string) =>
