@@ -1,8 +1,10 @@
 // src/components/Header.tsx
+import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { ROUTES, EXTERNAL_LINKS } from "../utils/links";
 import { useWeb3Context } from "../context/Web3Context";
+
 
 /** Styled-components */
 const Bar = styled.header`
@@ -126,30 +128,42 @@ const SocialIcon = styled.img`
     }
 `;
 
-const ConnectBtn = styled.button`
-  background: rgba(221, 26, 27, 0.9);
-  color: #fff;
+const ConnectBtn = styled.button<{ connected: boolean }>`
+  position: relative;
+  width: 16vw;
+  height: 16vh;
+  background: url(${p =>
+    p.connected
+      ? "/assets/images/connectedWallet.png"
+      : "/assets/images/connectWallet.png"}) no-repeat center/contain;
   border: none;
-  padding: 0.5rem 1rem;
-  font-family: 'Bangers', cursive;
-  font-size: 1rem;
-  border-radius: 0.25rem;
   cursor: pointer;
-  transition: transform 0.25s ease;
+  color: #fff;
+  font-family: 'Bangers', cursive;
+  font-size: 2vw;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+
+  /* center the text over the image */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .25s;
 
   &:hover {
-    transform: scale(1.15);
+    transform: scale(1.25);
   }
 
   @media (max-width: 640px) {
-    font-size: 0.75rem;
-    padding: 0.4rem 0.8rem;
+    width: 4rem;
+    height: 2rem;
+    font-size: 0.6rem;
   }
   @media (min-width: 640px) and (max-width: 1024px) {
-    font-size: 0.9rem;
-    padding: 0.45rem 0.9rem;
+    width: 5rem;
+    height: 2.25rem;
+    font-size: 0.75rem;
   }
-`;
+`
 
 export default function Header() {
   const { account, connect, disconnect } = useWeb3Context();
@@ -203,16 +217,12 @@ export default function Header() {
           </Link>
         </Socials>
 
-        {/* ← Replace image-button with text-button */}
-        {account ? (
-          <ConnectBtn onClick={disconnect}>
-            {truncated(account)}
-          </ConnectBtn>
-        ) : (
-          <ConnectBtn onClick={() => connect(false)}>
-            Connect Wallet
-          </ConnectBtn>
-        )}
+        <ConnectBtn
+          connected={!!account}
+          onClick={account ? disconnect : () => connect(false)}
+        >
+          {account ? truncated(account) : "Connect wallet"}
+        </ConnectBtn>
       </Right>
     </Bar>
   );
