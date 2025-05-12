@@ -45,7 +45,7 @@ const Middle = styled.div`
   padding-top: 2.5%;
   @media (max-width: 640px) {
     width: 100%;
-    padding: 5%;
+    padding-top: 5%;
   }
   @media (min-width: 640px) and (max-width: 1024px) {
     width: 100%;
@@ -64,7 +64,6 @@ const Right = styled.div`
   gap: 25px;
   @media (max-width: 640px) {
     width: 100%;
-    padding: 5%;
     flex-direction: row;
     justify-content: center;    
     gap: 100px;
@@ -82,15 +81,15 @@ const Socials = styled.div`
   display: flex;
   @media (max-width: 640px) {
     width: 100%;
-    padding: 5%;
+    padding-top: 5%;
     justify-content: center;
-    gap: 100px;
+    gap: 150px;
   }
   @media (min-width: 640px) and (max-width: 1024px) {
     width: 100%;
-    padding: 2.5%;
+    padding: 1.5%;
     justify-content: center;
-    gap: 25vw;
+    gap: 30vw;
   } 
 `;
 
@@ -106,8 +105,7 @@ const BanditLogo = styled.img`
     transition: transform .5s;
     &:hover { transform: scale(1.25); }
     @media (max-width: 640px) {
-        width: 300px;
-        padding: 2.5%;
+        width: 75%;
         &:hover { transform: scale(1.2); }
     }
     @media (min-width: 640px) and (max-width: 1024px) {
@@ -121,10 +119,10 @@ const SocialIcon = styled.img`
   transition: transform .25s;
   &:hover { transform: scale(1.25); }
     @media (max-width: 640px) {
-        width: 50px;
+        width: 30%;
     }
     @media (min-width: 640px) and (max-width: 1024px) {
-        width: 20%;
+        width: 25%;
     }
 `;
 
@@ -154,14 +152,24 @@ const ConnectBtn = styled.button<{ connected: boolean }>`
   }
 
   @media (max-width: 640px) {
-    width: 4rem;
-    height: 2rem;
-    font-size: 0.6rem;
+    width: 34vw;
+    height: 17vh;
+    font-size: 4.25vw;
+    position: absolute;
+    top: 20vw;
+    &:hover {
+      transform: scale(1.15);
+    }
   }
+    
   @media (min-width: 640px) and (max-width: 1024px) {
-    width: 5rem;
-    height: 2.25rem;
-    font-size: 0.75rem;
+    width: 30vw;
+    height: 15vh;
+    font-size: 3.5vw;
+    position: absolute;
+    &:hover {
+      transform: scale(1.2);
+    }
   }
 `
 
@@ -197,7 +205,7 @@ export default function Header() {
           <Link
             href={EXTERNAL_LINKS.DISCORD}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener noreferrer" 
           >
             <SocialIcon
               src="/assets/images/logos/logo-discord.png"
