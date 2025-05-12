@@ -154,7 +154,7 @@ const cards = [
   {
     href: '/genesismint',
     label: 'Genesis mint',
-    src: '/assets/images/navigation_cards/genesis_nft.gif',
+    src: '/assets/images/navigation_cards/genesisNFT.gif',
     alt: 'Genesis mint'
   },
   {
