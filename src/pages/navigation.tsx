@@ -152,27 +152,27 @@ const Animated = styled.div<{ dir: 'left'|'right' }>`
 /** 6) The actual cards data */
 const cards = [
   {
-    href: '/nft',
-    label: 'Collections',
-    src: '/assets/images/logos/logo-nft-thumb.png',
-    alt: 'NFT'
+    href: '/genesismint',
+    label: 'Genesis mint',
+    src: '/assets/images/navigation_cards/genesis_nft.gif',
+    alt: 'Genesis mint'
   },
   {
     href: '/ressources',
     label: 'Ressources',
-    src: '/assets/images/logos/logo-ressources-thumb.png',
+    src: '/assets/images/navigation_cards/ressources.gif',
     alt: 'Ressources'
   },
   {
     href: '/partners',
     label: 'Partners',
-    src: '/assets/images/logos/logo-partners-thumb.png',
+    src: '/assets/images/navigation_cards/partners.gif',
     alt: 'Partners'
   },
   {
     href: '/lore',
     label: 'Lore',
-    src: '/assets/images/logos/logo-lore-thumb.png',
+    src: '/assets/images/navigation_cards/lore.gif',
     alt: 'Lore'
   },
 ]

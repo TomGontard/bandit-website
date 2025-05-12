@@ -111,7 +111,7 @@ export default function Navigation() {
     <Layout>
       <Title>Discover the crime estate</Title>
         <Row>
-          <CardLink href="/nft" passHref>
+          <CardLink href="/genesismint" passHref>
             <Card>
               <Label>Collections</Label>
               <Thumb src="/assets/images/logos/logo-nft-thumb.png" alt="NFT" />
