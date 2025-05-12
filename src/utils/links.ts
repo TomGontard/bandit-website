@@ -2,11 +2,10 @@
 export const ROUTES = {
   HOME: "/",
   NAVIGATION: "/navigation",
-  NFT: "/nft",
-  GAME: "/game",
   RESSOURCES: "/ressources",
   PARTNERS: "/partners",
   LORE: "/lore",
+  GENESISMINT: "/genesismint",
 } as const;
 
 export const EXTERNAL_LINKS = {

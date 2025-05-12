@@ -157,6 +157,16 @@ const Subtitle = styled.p`
   top: 3%;
   Z-index: 10;
   padding: 0 5%;
+
+   &::before {
+    content: '';
+    position: absolute;
+    inset: -25%;
+    background: url('/assets/images/ombre.png') center/cover no-repeat;
+    filter: blur(12px);
+    z-index: -1;
+  }
+    
   @media (max-width: 375px) {
     font-size: 17.5px;
     padding: 0 2.5%;
@@ -380,7 +390,7 @@ export default function Home() {
         Scarred, stylish and unstoppable.
       </Subtitle>
       <ButtonWrapper exiting={exiting}>
-        <BlurImage src={"../assets/images/blur.svg"} alt="" />
+        <BlurImage src={"../assets/images/ombre.png"} alt="" />
         <ButtonFrame src={"../assets/images/around-button.svg"} alt="" />
         <CTAButton onClick={() => {
           setExiting(true)

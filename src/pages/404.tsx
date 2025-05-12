@@ -8,7 +8,7 @@ export default function Custom404() {
       <div style={{ textAlign: 'center', padding: '4rem' }}>
         <h1>404 – Page not found</h1>
         <p>Oups, cette page n’existe pas.</p>
-        <Link href="/">
+        <Link href="/" legacyBehavior passHref>
           <a style={{ color: '#fff', textDecoration: 'underline' }}>Retour à l’accueil</a>
         </Link>
       </div>
