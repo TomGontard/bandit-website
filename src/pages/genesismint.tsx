@@ -1,249 +1,323 @@
 // src/pages/mint.tsx
-import { useState, useEffect, useMemo } from 'react'
-import styled from 'styled-components'
-import Layout from '../components/Layout'
-import { useWeb3Context } from '../context/Web3Context'
-import { Contract, formatEther, parseEther } from 'ethers'
-import { SIMPLE_MINT_ABI } from '../utils/abi'
+import { useState, useEffect, useMemo } from "react"
+import styled from "styled-components"
+import Layout from "../components/Layout"
+import { useWeb3Context } from "../context/Web3Context"
+import { Contract, formatEther, parseEther } from "ethers"
+import { SIMPLE_MINT_ABI } from "../utils/abi"
 
-// Adresse du contrat & supply max
 const CONTRACT_ADDRESS = "0x6E344310B5B745abBA057607A9B0baa1C571c322"
 const MAX_SUPPLY       = 999
-const genesisNFT = 'https://bandit-website-vokv.vercel.app/assets/images/navigation_cards/genesisNFT.gif'
+const BATCH_COUNT      = 10
+const BATCH_DURATION   = 3600 // seconds per batch (1h)
 
 const PageContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10vw;
+  display: flex; 
+  width: 100%;
+  height: auto;
+  gap: 15vw;
   justify-content: center;
-  margin: 2.5vh 0;
+  padding: 5vh 10vw;
   @media (min-width: 1024px) { flex-wrap: nowrap; }
 `
 const InfoCard = styled.div`
-  flex: 3;
-  min-width: 40vw; min-height: 60vh;
+  display: flex; 
+  flex: 3; 
+  flex-direction: column; 
+  min-width: 35vw;
+  min-height: 20vw;
+  max-width: 50vw;
+  max-height: 27.5vw;
   background: rgba(255,255,255,0.1);
   border-radius: 1rem;
   border-bottom-left-radius: 10vw;
   border-bottom-right-radius: 10vw;
-  display: flex;
-  flex-direction: column;
   overflow: hidden;
 `
 const InfoContent = styled.div`
-  padding: 2rem;
-  color: #fff;
+  padding: 2vh 2vw; 
+  color: #fff; 
   flex: 1;
+  display: flex;
+  flex-direction: column;
 `
 const InfoTitle = styled.h1`
-  font-family: 'Bangers', cursive;
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 2.5rem; 
+  margin-bottom: 1vh;
+  text-align: center;
 `
 const InfoText = styled.p`
-  font-size: 1.1rem;
+  
+  font-size: 1.1rem; 
   line-height: 1.4;
 `
 const QuantityInput = styled.input`
-  width: 4rem;
-  padding: 0.25rem;
+  width: 100%; 
+  padding: 0.25rem; 
   font-size: 1rem;
-  margin: 0.5rem 0;
+  margin: 0.5rem 0; 
   text-align: center;
 `
 const MintButton = styled.button`
-  margin: 1rem 0;
+  margin: 1rem 0; 
   padding: 1rem 2rem;
-  font-family: 'Bangers', cursive;
+  font-family: 'Bangers', cursive; 
   font-size: 1.25rem;
-  background: #dd1a1b;
-  color: #fff;
+  background: #dd1a1b; 
+  color: #fff; 
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.5rem; 
   cursor: pointer;
   transition: transform 0.2s ease;
   &:hover { transform: scale(1.05); }
   &:disabled { opacity: 0.5; cursor: default; }
 `
 const MintStatusContainer = styled.div`
-  background: #6b4bf5;
-  padding: 1.5rem 0;
+  background: #6b4bf5; 
+  padding: 1.5rem 0; 
   text-align: center;
-  border-bottom-left-radius: 50vw;
+  border-bottom-left-radius: 50vw; 
   border-bottom-right-radius: 50vw;
 `
 const MintStatus = styled.div`
   font-family: 'Permanent Marker', cursive;
-  font-size: 1.5rem;
-  color: #fff;
+  font-size: 1.5rem; color: #fff;
 `
 const NFTPreview = styled.div`
-  flex: 2;
-  min-width: 100px; min-height: 100px;
-  background: #fff;
-  border-radius: 1rem;
+  display: flex; 
+  flex: 2; 
+  min-width: 20vw;
+  min-height: 20vw;
+  max-width: 30vw;
+  max-height: 30vw;
+  background: #fff; 
+  border-radius: 1rem; 
   overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
+  align-items: center; 
+  justify-content: center;
 `
 const PreviewImage = styled.img`
-  max-width: 50vw;
-  max-height: 40vh;
+  object-fit: fill;
+  width: 100%; 
+  height: 100%; 
+  object-position: center;
 `
 
 export default function MintPage() {
   const { provider, signer, account, connect } = useWeb3Context()
 
-  // états UI
-  const [totalMinted,  setTotalMinted]   = useState<number | null>(null)
-  const [mintPrice,    setMintPrice]     = useState<string>('0')
-  const [availableQty, setAvailableQty]  = useState<number>(0)
-  const [quantity,     setQuantity]      = useState<number>(1)
-  const [isMinting,    setIsMinting]     = useState(false)
+  // UI state
+  const [mintPrice,       setMintPrice]       = useState<string>("0")
+  const [totalMinted,     setTotalMinted]     = useState<number | null>(null)
+  const [baseQuota,       setBaseQuota]       = useState<number>(0)
+  const [batchQuotas,     setBatchQuotas]     = useState<number[]>([])
+  const [availableQuota,  setAvailableQuota]  = useState<number>(0)
+  const [saleStart,       setSaleStart]       = useState<number>(0) // unix seconds
+  const [isPaused,        setIsPaused]        = useState<boolean>(true)
+  const [quantity,        setQuantity]        = useState<number>(1)
+  const [isMinting,       setIsMinting]       = useState<boolean>(false)
 
-  // contrats memoized
+  // memoized contract instances
   const readOnlyContract = useMemo(
     () => provider
-          ? new Contract(CONTRACT_ADDRESS, SIMPLE_MINT_ABI, provider)
-          : null,
+      ? new Contract(CONTRACT_ADDRESS, SIMPLE_MINT_ABI, provider)
+      : null,
     [provider]
   )
   const writeContract = useMemo(
     () => signer
-          ? new Contract(CONTRACT_ADDRESS, SIMPLE_MINT_ABI, signer)
-          : null,
+      ? new Contract(CONTRACT_ADDRESS, SIMPLE_MINT_ABI, signer)
+      : null,
     [signer]
   )
 
-  // charge price & totalSupply dès que le contrat change
+  // ── 1) load global on-chain data whenever contract appears ──
   useEffect(() => {
     if (!readOnlyContract) return
-
-    // prix unitaire
+    // price
     readOnlyContract.mintPrice()
-      .then((priceBn: bigint) => setMintPrice(formatEther(priceBn)))
+      .then((bn: bigint) => setMintPrice(formatEther(bn)))
       .catch(console.error)
-
-    // totalMinted (nextTokenId-1)
+    // nextTokenId → minted
     readOnlyContract.nextTokenId()
-      .then((nextId: bigint) => {
-        // convert bigint → number, then -1
-        setTotalMinted(Number(nextId) - 1)
-      })
+      .then((bn: bigint) => setTotalMinted(Number(bn) - 1))
+      .catch(console.error)
+    // saleStartTime & paused
+    readOnlyContract.saleStartTime()
+      .then((bn: bigint) => setSaleStart(Number(bn)))
+      .catch(console.error)
+    readOnlyContract.paused()
+      .then((b: boolean) => setIsPaused(b))
       .catch(console.error)
   }, [readOnlyContract])
 
-  // charge quota dispo quand compte ou contrat change
+  // ── 2) load user‐specific data on login or change ──
   useEffect(() => {
     if (!readOnlyContract || !account) {
-      setAvailableQty(0)
+      setBaseQuota(0)
+      setAvailableQuota(0)
+      setBatchQuotas([])
       return
     }
-    readOnlyContract
-      .availableQuota(account)
-      .then((quota: bigint) => {
-        setAvailableQty(Number(quota))
-      })
+    // base whitelist
+    readOnlyContract.whitelistQuota(account)
+      .then((bn: bigint) => setBaseQuota(Number(bn)))
+      .catch(console.error)
+
+    // availableQuota
+    readOnlyContract.availableQuota(account)
+      .then((bn: bigint) => setAvailableQuota(Number(bn)))
+      .catch(console.error)
+
+    // per-batch quotas 1…10
+    Promise.all(
+      Array.from({ length: BATCH_COUNT }, (_, i) =>
+        readOnlyContract.getBatchQuota(i+1, account)
+          .then((bn: bigint) => Number(bn))
+      )
+    ).then(setBatchQuotas)
       .catch(console.error)
   }, [readOnlyContract, account])
 
-  // met à jour quantity pour qu’elle reste valide
+  // ── 3) clamp quantity to valid range ──
   useEffect(() => {
-    const restSupply = MAX_SUPPLY - (totalMinted ?? 0)
-    const maxQty = Math.max(0, Math.min(availableQty, restSupply))
+    const minted = totalMinted ?? 0
+    const rest   = MAX_SUPPLY - minted
+    const maxQty = Math.min(baseQuota + batchQuotas.reduce((a,b) => a+b,0), rest)
     if (quantity > maxQty) setQuantity(maxQty || 1)
-  }, [availableQty, totalMinted, quantity])
+  }, [baseQuota, batchQuotas, totalMinted, quantity])
 
-  // handler de mint batch
+  // ── 4) mint handler ──
   const handleMint = async () => {
     if (!account) {
       await connect(false)
       return
     }
-    if (!writeContract || !readOnlyContract) return
-
+    if (!writeContract) return
     try {
       setIsMinting(true)
-
-      // mint(quantity) payable
-      const unitPrice = parseEther(mintPrice)  // bigint
+      const unitPrice = parseEther(mintPrice)
+      const totalValue = unitPrice * BigInt(quantity)
       const tx = await writeContract.mint(quantity, {
-        value: unitPrice * BigInt(quantity)
+        value: totalValue,
       })
       await tx.wait()
-
-      // relecture rapide: both return bigints
-      const [newNext, newQuota] = await Promise.all([
-        readOnlyContract.nextTokenId(),
-        readOnlyContract.availableQuota(account)
+      // refresh counts
+      const [nextId, avail] = await Promise.all([
+        readOnlyContract!.nextTokenId(),
+        readOnlyContract!.availableQuota(account)
       ])
-
-      // convert each bigint → number
-      setTotalMinted(Number(newNext) - 1)
-      setAvailableQty(Number(newQuota))
-
-      alert('✅ Mint réussi !')
+      setTotalMinted(Number(nextId) - 1)
+      setAvailableQuota(Number(avail))
+      alert("✅ Mint réussi !")
     } catch (err: unknown) {
-      console.error(err)
-      const message = err instanceof Error ? err.message : String(err)
-      alert('❌ Erreur pendant le mint : ' + message)
+            console.error(err)
+            const message = err instanceof Error
+              ? err.message
+              : String(err)
+            alert("❌ Erreur pendant le mint : " + message)
     } finally {
       setIsMinting(false)
     }
   }
 
-  // calculs UI
-  const restSupply = MAX_SUPPLY - (totalMinted ?? 0)
-  const isSoldOut  = restSupply <= 0
-  const canMint    = !!account && quantity > 0 && quantity <= availableQty && !isSoldOut
+  // ── helpers for UI modes ──
+  const minted    = totalMinted ?? 0
+  const rest      = MAX_SUPPLY - minted
+  const soldOut   = rest <= 0
+  const nowSec    = Math.floor(Date.now()/1000)
+  const elapsedH  = saleStart>0 ? Math.floor((nowSec - saleStart)/3600) : 0
+  const upcoming  = batchQuotas
+    .map((q,i) => ({ batch: i+1, quota: q }))
+    .filter(x => x.quota>0 && nowSec < saleStart + x.batch*BATCH_DURATION)
+  const nextBatch = upcoming[0]
 
   return (
     <Layout>
       <PageContainer>
+
         <InfoCard>
           <InfoContent>
-            <InfoTitle>GENESIS MINT</InfoTitle>
+            <InfoTitle>Bandit Genesis Pass</InfoTitle>
             <InfoText>
-              Prix unitaire : <strong>{mintPrice} MON</strong><br/>
-              Votre quota dispo : <strong>{availableQty}</strong><br/>
-              Stock restant : <strong>{restSupply}</strong>
+              Price per mint : <strong>{mintPrice} $MON</strong><br/>
+              Your whitelists on launch : <strong>{baseQuota}</strong><br/>
+              { isPaused
+                ? <>Launch in&nbsp; 
+                    { saleStart>nowSec
+                      ? `${Math.ceil((saleStart-nowSec)/3600)}h`
+                      : "?"
+                    }
+                  </>
+                : soldOut
+                  ? <>Sold out</>
+                  : <>Quota available to mint :&nbsp;
+                      <strong>{availableQuota}</strong>
+                      { nextBatch
+                        ? <> + batch {nextBatch.batch} of {nextBatch.quota} in&nbsp;
+                            <strong>
+                              {Math.ceil((saleStart + nextBatch.batch*3600 - nowSec)/3600)}h
+                            </strong>
+                          </>
+                        : elapsedH>=BATCH_COUNT
+                          ? <> (all batches released)</>
+                          : null
+                      }
+                    </>
+              }
             </InfoText>
 
             <QuantityInput
               type="number"
               min={1}
-              max={Math.min(availableQty, restSupply)}
+              max={Math.min(availableQuota, rest)}
               value={quantity}
-              onChange={e => setQuantity(parseInt(e.target.value) || 1)}
+              onChange={e => setQuantity(parseInt(e.target.value)||1)}
             />
 
             <MintButton
               onClick={handleMint}
-              disabled={isMinting || !canMint}
+              disabled={
+                isMinting
+                || isPaused
+                || soldOut
+                || quantity<1
+                || quantity>availableQuota
+              }
             >
-              {!account
-                ? 'Connectez votre wallet'
-                : isSoldOut
-                  ? 'Sold out'
-                  : isMinting
-                    ? `Mint en cours…`
-                    : `Mint ${quantity} × (${mintPrice} MON)`
+              { !account
+                  ? "Connect wallet"
+                  : soldOut
+                    ? "Sold out"
+                    : isMinting
+                      ? "Mint in progress..."
+                      : `Mint ${quantity} × ${mintPrice} MON`
               }
             </MintButton>
           </InfoContent>
 
           <MintStatusContainer>
             <MintStatus>
-              TOTAL MINTED<br/>
-              {totalMinted !== null
-                ? `${totalMinted}/${MAX_SUPPLY}`
-                : '…/…'}
+              Status:&nbsp;
+              { isPaused
+                  ? "?"
+                  : soldOut
+                    ? "Sold out"
+                    : <strong>{minted}/{MAX_SUPPLY}</strong>
+                    
+              }
             </MintStatus>
           </MintStatusContainer>
         </InfoCard>
 
         <NFTPreview>
-        <PreviewImage src={genesisNFT} alt="Aperçu du NFT" />
-      </NFTPreview>
+          <PreviewImage
+            src="https://bandit-website-vokv.vercel.app/assets/images/navigation_cards/genesisNFT.gif"
+            alt="Preview"
+          />
+        </NFTPreview>
+
       </PageContainer>
     </Layout>
   )
