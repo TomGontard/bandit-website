@@ -207,7 +207,12 @@ export default function Header() {
     if (btnState === "no") {
       connect(false)         // connect MetaMask
     } else if (btnState === "wrong") {
-      switchNetwork()        // ajoute/switch le réseau
+      if (window.ethereum) {
+               // ajoute ou bascule vers le testnet Monad
+               switchNetwork(window.ethereum)
+             } else {
+               alert("MetaMask non détecté")
+             }
     } else {
       disconnect()           // déconnecte
     }
