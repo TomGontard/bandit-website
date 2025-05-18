@@ -172,7 +172,7 @@ const cards = [
   {
     href: '/lore',
     label: 'Lore',
-    src: '/assets/images/navigation_cards/lore.gif',
+    src: 'https://x.com/monad_bandit/status/1922592726425423935',
     alt: 'Lore'
   },
 ]
