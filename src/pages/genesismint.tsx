@@ -9,258 +9,188 @@ import { SIMPLE_MINT_ABI } from "../utils/abi"
 const CONTRACT_ADDRESS = "0x6E344310B5B745abBA057607A9B0baa1C571c322"
 const MAX_SUPPLY       = 999
 const BATCH_COUNT      = 10
-const BATCH_DURATION   = 3600 // seconds per batch (1h)
+const BATCH_DURATION   = 3600 // sec = 1h
 
+/** Styled-components **/
 const PageContainer = styled.div`
-  display: flex; 
-  width: 100%;
-  height: auto;
-  gap: 15vw;
-  justify-content: center;
+  display: flex; gap: 10vw; justify-content: center;
   padding: 5vh 10vw;
-  @media (min-width: 1024px) { flex-wrap: nowrap; }
+  @media (min-width:1024px){ flex-wrap:nowrap }
 `
+
 const InfoCard = styled.div`
-  display: flex; 
-  flex: 3; 
-  flex-direction: column; 
-  min-width: 35vw;
-  min-height: 20vw;
-  max-width: 50vw;
-  max-height: 27.5vw;
-  background: rgba(255,255,255,0.1);
-  border-radius: 1rem;
-  border-bottom-left-radius: 7.5vw;
-  border-bottom-right-radius: 7.5vw;
-  overflow: hidden;
+  flex:3; min-width:35vw; background:rgba(255,255,255,0.1);
+  border-radius:1rem; border-bottom-left-radius:7.5vw;
+  border-bottom-right-radius:7.5vw; overflow:hidden;
+  display:flex; flex-direction:column;
 `
+
 const InfoContent = styled.div`
-  padding: 2vh 2vw; 
-  color: #fff; 
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  flex:1; padding:2vh 2vw; color:#fff;
+  display:flex; flex-direction:column;
 `
+
 const InfoTitle = styled.h1`
-  font-family: 'Permanent Marker', cursive;
-  font-size: 3vw; 
-  margin-bottom: 1vh;
-  text-align: center;
+  font-family:'Permanent Marker',cursive;
+  font-size:3vw; text-align:center; margin-bottom:1vh;
 `
+
 const InfoText = styled.p`
-  font-size: 1.5vw; 
-  line-height: 1.6;
+  font-size:1.5vw; line-height:1.6;
 `
+
 const MintStatusContainer = styled.div`
-  background: #6b4bf5; 
-  padding: 2.5vh 0; 
-  text-align: center;
-  border-bottom-left-radius: 40vw; 
-  border-bottom-right-radius: 40vw;
+  background:#6b4bf5; padding:2.5vh 0; text-align:center;
+  border-bottom-left-radius:40vw; border-bottom-right-radius:40vw;
 `
+
 const MintStatus = styled.div`
-  font-size: 2vw;
-  color: #fff;
+  font-size:2vw; color:#fff;
 `
+
 const MintControl = styled.div`
-  display: flex;
-  flex: 1;
-  max-height: 3rem;
-  margin-top: 2vh;
-  background: #dd1a1b;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  user-select: none;
+  display:flex; height:3rem; margin-top:auto;
+  background:#dd1a1b; border-radius:0.5rem; overflow:hidden;
+  user-select:none;
 `
 
-const SideAction = styled.button<{ disabled?: boolean }>`
-  flex: 0 0 3rem;
-  height: 3rem;
-  border: none;
-  background: transparent;
-  color: #fff;
-  font-family: 'Bangers', cursive;
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
-
-  &:disabled {
-    opacity: 0.3;
-    cursor: default;
-  }
-  &:hover:not(:disabled) {
-    background: rgba(255,255,255,0.1);
-  }
+const SideAction = styled.button<{ disabled?:boolean }>`
+  flex:0 0 3rem; border:none; background:transparent;
+  color:#fff; font-family:'Bangers',cursive; font-size:1.5rem;
+  cursor:pointer; transition:background .2s;
+  &:disabled { opacity:.3; cursor:default }
+  &:hover:not(:disabled){ background:rgba(255,255,255,.1) }
 `
 
-const MintAction = styled.button<{ disabled?: boolean }>`
-  flex: 1;
-  border: none;
-  background: transparent;
-  height: 100%;
-  color: #fff;
-  font-family: 'Bangers', cursive;
-  font-size: 1.25rem;
-  padding: 0 1rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
-  &:hover:not(:disabled) {
-    background: rgba(255,255,255,0.15);
-  }
+const MintAction = styled.button<{ disabled?:boolean }>`
+  flex:1; border:none; background:transparent; color:#fff;
+  font-family:'Bangers',cursive; font-size:1.25rem;
+  cursor:pointer; transition:background .2s;
+  &:disabled { opacity:.5; cursor:default }
+  &:hover:not(:disabled){ background:rgba(255,255,255,.15) }
 `
+
 const NFTPreview = styled.div`
-  display: flex; 
-  flex: 2; 
-  min-width: 20vw;
-  min-height: 20vw;
-  max-width: 30vw;
-  max-height: 30vw;
-  background: #fff; 
-  border-radius: 2rem; 
-  overflow: hidden;
-  align-items: center; 
-  justify-content: center;
-`
-const PreviewImage = styled.img`
-  object-fit: fill;
-  width: 100%; 
-  height: 100%; 
-  object-position: center;
+  flex:2; min-width:20vw; min-height:20vw; background:#fff;
+  border-radius:2rem; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
 `
 
+const PreviewImage = styled.img`
+  width:100%; height:100%; object-fit:cover;
+`
+
+/** Component **/
 export default function MintPage() {
   const { provider, signer, account, connect } = useWeb3Context()
 
-  // UI state
-  const [mintPrice,       setMintPrice]       = useState<string>("0")
-  const [totalMinted,     setTotalMinted]     = useState<number | null>(null)
-  const [baseQuota,       setBaseQuota]       = useState<number>(0)
-  const [batchQuotas,     setBatchQuotas]     = useState<number[]>([])
-  const [availableQuota,  setAvailableQuota]  = useState<number>(0)
-  const [saleStart,       setSaleStart]       = useState<number>(0) // unix seconds
-  const [isPaused,        setIsPaused]        = useState<boolean>(true)
-  const [quantity,        setQuantity]        = useState<number>(1)
-  const [isMinting,       setIsMinting]       = useState<boolean>(false)
+  // –– on-chain state
+  const [price,      setPrice]      = useState("0")
+  const [minted,     setMinted]     = useState<number|null>(null)
+  const [launchQty,  setLaunchQty]  = useState(0)
+  const [availQty,   setAvailQty]   = useState(0)
+  const [batchQuotas,setBatchQuotas]= useState<number[]>([])
+  const [startTime,  setStartTime]  = useState(0)   // unix sec
+  const [paused,     setPaused]     = useState(true)
 
-  // memoized contract instances
-  const readOnlyContract = useMemo(
+  // –– UI state
+  const [qty,        setQty]        = useState(1)
+  const [isMinting,  setIsMinting]  = useState(false)
+
+  // –– contract instances
+  const readOnly = useMemo(
     () => provider
-      ? new Contract(CONTRACT_ADDRESS, SIMPLE_MINT_ABI, provider)
-      : null,
+         ? new Contract(CONTRACT_ADDRESS, SIMPLE_MINT_ABI, provider)
+         : null,
     [provider]
   )
-  const writeContract = useMemo(
+  const writeOnly = useMemo(
     () => signer
-      ? new Contract(CONTRACT_ADDRESS, SIMPLE_MINT_ABI, signer)
-      : null,
+         ? new Contract(CONTRACT_ADDRESS, SIMPLE_MINT_ABI, signer)
+         : null,
     [signer]
   )
 
-  // ── 1) load global on-chain data whenever contract appears ──
+  // 1️⃣ Charger les données globales
   useEffect(() => {
-    if (!readOnlyContract) return
-    // price
-    readOnlyContract.mintPrice()
-      .then((bn: bigint) => setMintPrice(formatEther(bn)))
+    if (!readOnly) return
+    readOnly.mintPrice()
+      .then((b:bigint)=> setPrice(formatEther(b)))
       .catch(console.error)
-    // nextTokenId → minted
-    readOnlyContract.nextTokenId()
-      .then((bn: bigint) => setTotalMinted(Number(bn) - 1))
+    readOnly.nextTokenId()
+      .then((b:bigint)=> setMinted(Number(b)-1))
       .catch(console.error)
-    // saleStartTime & paused
-    readOnlyContract.saleStartTime()
-      .then((bn: bigint) => setSaleStart(Number(bn)))
+    readOnly.saleStartTime()
+      .then((b:bigint)=> setStartTime(Number(b)))
       .catch(console.error)
-    readOnlyContract.paused()
-      .then((b: boolean) => setIsPaused(b))
+    readOnly.paused()
+      .then((b:boolean)=> setPaused(b))
       .catch(console.error)
-  }, [readOnlyContract])
+  }, [readOnly])
 
-  // ── 2) load user‐specific data on login or change ──
+  // 2️⃣ Charger les quotas de l’utilisateur
   useEffect(() => {
-    if (!readOnlyContract || !account) {
-      setBaseQuota(0)
-      setAvailableQuota(0)
-      setBatchQuotas([])
-      return
+    if (!readOnly || !account) {
+          setLaunchQty(0)
+          setAvailQty(0)
+          setBatchQuotas([])
+          return
     }
-    // base whitelist
-    readOnlyContract.whitelistQuota(account)
-      .then((bn: bigint) => setBaseQuota(Number(bn)))
+    readOnly.whitelistQuota(account)
+      .then((b:bigint)=> setLaunchQty(Number(b)))
       .catch(console.error)
-
-    // availableQuota
-    readOnlyContract.availableQuota(account)
-      .then((bn: bigint) => setAvailableQuota(Number(bn)))
+    readOnly.availableQuota(account)
+      .then((b:bigint)=> setAvailQty(Number(b)))
       .catch(console.error)
-
-    // per-batch quotas 1…10
     Promise.all(
-      Array.from({ length: BATCH_COUNT }, (_, i) =>
-        readOnlyContract.getBatchQuota(i+1, account)
-          .then((bn: bigint) => Number(bn))
+      Array.from({length:BATCH_COUNT},(_,i)=>
+        readOnly.getBatchQuota(i+1, account)
+          .then((b:bigint)=>Number(b))
       )
-    ).then(setBatchQuotas)
-      .catch(console.error)
-  }, [readOnlyContract, account])
+    ).then(setBatchQuotas).catch(console.error)
+  }, [readOnly, account])
 
-  // ── 3) clamp quantity to valid range ──
+  // 3️⃣ Clamp qty
   useEffect(() => {
-    const minted = totalMinted ?? 0
-    const rest   = MAX_SUPPLY - minted
-    const maxQty = Math.min(baseQuota + batchQuotas.reduce((a,b) => a+b,0), rest)
-    if (quantity > maxQty) setQuantity(maxQty || 1)
-  }, [baseQuota, batchQuotas, totalMinted, quantity])
+    const rest = MAX_SUPPLY - (minted||0)
+    const maxAllowed = Math.min(launchQty + batchQuotas.reduce((a,b)=>a+b,0), rest)
+    if (qty > maxAllowed) setQty(maxAllowed||1)
+  }, [launchQty, batchQuotas, minted, qty])
 
-  // ── 4) mint handler ──
-  const handleMint = async () => {
-    if (!account) {
-      await connect(false)
-      return
-    }
-    if (!writeContract) return
+  // 4️⃣ Mint handler
+  const handleMint = async ()=>{
+    if (!account) { await connect(false); return }
+    if (!writeOnly) return
+
+    setIsMinting(true)
     try {
-      setIsMinting(true)
-      const unitPrice = parseEther(mintPrice)
-      const totalValue = unitPrice * BigInt(quantity)
-      const tx = await writeContract.mint(quantity, {
-        value: totalValue,
-      })
+      const unit = parseEther(price)
+      const tx   = await writeOnly.mint(qty, { value: unit * BigInt(qty) })
       await tx.wait()
       // refresh counts
-      const [nextId, avail] = await Promise.all([
-        readOnlyContract!.nextTokenId(),
-        readOnlyContract!.availableQuota(account)
+      const [n,b] = await Promise.all([
+        readOnly!.nextTokenId(),
+        readOnly!.availableQuota(account)
       ])
-      setTotalMinted(Number(nextId) - 1)
-      setAvailableQuota(Number(avail))
+      setMinted(Number(n)-1)
+      setAvailQty(Number(b))
       alert("✅ Mint réussi !")
-    } catch (err: unknown) {
-            console.error(err)
-            const message = err instanceof Error
-              ? err.message
-              : String(err)
-            alert("❌ Erreur pendant le mint : " + message)
+    } catch (err) {
+      console.error(err)
+      const msg = err instanceof Error ? err.message : String(err)
+      alert("❌ Erreur : "+msg)
     } finally {
       setIsMinting(false)
     }
   }
 
-  // ── helpers for UI modes ──
-  const minted    = totalMinted ?? 0
-  const rest      = MAX_SUPPLY - minted
-  const soldOut   = rest <= 0
-  const nowSec    = Math.floor(Date.now()/1000)
-  const elapsedH  = saleStart>0 ? Math.floor((nowSec - saleStart)/3600) : 0
-  const upcoming  = batchQuotas
-    .map((q,i) => ({ batch: i+1, quota: q }))
-    .filter(x => x.quota>0 && nowSec < saleStart + x.batch*BATCH_DURATION)
-  const nextBatch = upcoming[0]
+  // –– calculs d’affichage
+  const soldOut = (MAX_SUPPLY - (minted||0)) <= 0
+  const now   = Math.floor(Date.now()/1000)
+  // trouver prochain batch éligible
+  const upcoming = batchQuotas
+    .map((q,i)=>({ batch:i+1, quota:q }))
+    .filter(x=> x.quota>0 && now < startTime + x.batch*BATCH_DURATION)[0]
 
   return (
     <Layout>
@@ -268,82 +198,67 @@ export default function MintPage() {
 
         <InfoCard>
           <InfoContent>
+
             <InfoTitle>Bandit Genesis Pass</InfoTitle>
+
             <InfoText>
-              Price per mint : <strong>{mintPrice} $MON</strong><br/>
-              Your whitelists on launch : <strong>{baseQuota}</strong><br/>
-              { isPaused
-                ? <>Launch in&nbsp; 
-                    { saleStart>nowSec
-                      ? `${Math.ceil((saleStart-nowSec)/3600)}h`
-                      : "?"
-                    }
-                  </>
+              Price per mint : <strong>{price} $MON</strong><br/>
+              Your whitelists on launch : <strong>{launchQty}</strong><br/>
+              { paused
+                ? <>Launch in { startTime>now
+                              ? `${Math.ceil((startTime-now)/3600)}h`
+                              : "…"
+                           }</>
                 : soldOut
                   ? <>Sold out</>
-                  : <>Quota available to mint :&nbsp;
-                      <strong>{availableQuota}</strong>
-                      { nextBatch
-                        ? <> + batch {nextBatch.batch} of {nextBatch.quota} in&nbsp;
-                            <strong>
-                              {Math.ceil((saleStart + nextBatch.batch*3600 - nowSec)/3600)}h
-                            </strong>
-                          </>
-                        : elapsedH>=BATCH_COUNT
-                          ? <> (all batches released)</>
-                          : null
+                  : <>
+                      Eligibility to mint in batch&nbsp;
+                      <strong>
+                        { upcoming
+                            ? `#${upcoming.batch}`
+                            : "— all released"}
+                      </strong><br/>
+                      { upcoming &&
+                        <em>{`(after ${upcoming.batch}h from launch)`}</em>
                       }
                     </>
               }
             </InfoText>
 
-            {/* ─── un seul contrôle “– / Mint / +” ─── */}
-        <MintControl>
-          <SideAction
-            onClick={() => setQuantity(q => Math.max(1, q - 1))}
-            disabled={quantity <= 1 || isMinting || soldOut}
-          >
-            –
-          </SideAction>
+            <MintControl>
+              <SideAction
+                onClick={()=>setQty(q=>Math.max(1,q-1))}
+                disabled={qty<=1 || isMinting || soldOut}
+              >–</SideAction>
 
-          <MintAction
-            onClick={handleMint}
-            disabled={
-              isMinting ||
-              isPaused ||
-              soldOut ||
-              quantity < 1 ||
-              quantity > availableQuota
-            }
-          >
-            { !account
-                ? "Connect wallet"
-                : soldOut
-                  ? "Sold out"
-                  : isMinting
-                    ? "Mint…"
-                    : `Mint ${quantity}`
-            }
-          </MintAction>
+              <MintAction
+                onClick={handleMint}
+                disabled={ isMinting || paused || soldOut || qty<1 || qty>availQty }
+              >
+                { !account
+                    ? "Connect wallet"
+                    : soldOut
+                      ? "Sold out"
+                      : isMinting
+                        ? "Minting…"
+                        : `Mint ${qty}`
+                }
+              </MintAction>
 
-          <SideAction
-            onClick={() => setQuantity(q => Math.min(availableQuota, q + 1))}
-            disabled={quantity >= availableQuota || isMinting || soldOut}
-          >
-            +
-          </SideAction>
-        </MintControl>
+              <SideAction
+                onClick={()=>setQty(q=>Math.min(availQty,q+1))}
+                disabled={qty>=availQty || isMinting || soldOut}
+              >+</SideAction>
+            </MintControl>
+
           </InfoContent>
 
           <MintStatusContainer>
             <MintStatus>
               Status:&nbsp;
-              { isPaused
-                  ? "?"
-                  : soldOut
-                    ? "Sold out"
-                    : <strong>{minted}/{MAX_SUPPLY}</strong>
-                    
+              { paused ? "Pré-launch"
+                : soldOut ? "Terminé"
+                : `${minted}/${MAX_SUPPLY}`
               }
             </MintStatus>
           </MintStatusContainer>
@@ -351,7 +266,7 @@ export default function MintPage() {
 
         <NFTPreview>
           <PreviewImage
-            src="https://bandit-website-vokv.vercel.app/assets/images/navigation_cards/genesisNFT.gif"
+            src="/assets/images/navigation_cards/genesisNFT.gif"
             alt="Preview"
           />
         </NFTPreview>
