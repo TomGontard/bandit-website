@@ -30,8 +30,8 @@ const InfoCard = styled.div`
   max-height: 27.5vw;
   background: rgba(255,255,255,0.1);
   border-radius: 1rem;
-  border-bottom-left-radius: 10vw;
-  border-bottom-right-radius: 10vw;
+  border-bottom-left-radius: 7.5vw;
+  border-bottom-right-radius: 7.5vw;
   overflow: hidden;
 `
 const InfoContent = styled.div`
@@ -43,46 +43,75 @@ const InfoContent = styled.div`
 `
 const InfoTitle = styled.h1`
   font-family: 'Permanent Marker', cursive;
-  font-size: 2.5rem; 
+  font-size: 3vw; 
   margin-bottom: 1vh;
   text-align: center;
 `
 const InfoText = styled.p`
-  
-  font-size: 1.1rem; 
-  line-height: 1.4;
-`
-const QuantityInput = styled.input`
-  width: 100%; 
-  padding: 0.25rem; 
-  font-size: 1rem;
-  margin: 0.5rem 0; 
-  text-align: center;
-`
-const MintButton = styled.button`
-  margin: 1rem 0; 
-  padding: 1rem 2rem;
-  font-family: 'Bangers', cursive; 
-  font-size: 1.25rem;
-  background: #dd1a1b; 
-  color: #fff; 
-  border: none;
-  border-radius: 0.5rem; 
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  &:hover { transform: scale(1.05); }
-  &:disabled { opacity: 0.5; cursor: default; }
+  font-size: 1.5vw; 
+  line-height: 1.6;
 `
 const MintStatusContainer = styled.div`
   background: #6b4bf5; 
-  padding: 1.5rem 0; 
+  padding: 2.5vh 0; 
   text-align: center;
-  border-bottom-left-radius: 50vw; 
-  border-bottom-right-radius: 50vw;
+  border-bottom-left-radius: 40vw; 
+  border-bottom-right-radius: 40vw;
 `
 const MintStatus = styled.div`
-  font-family: 'Permanent Marker', cursive;
-  font-size: 1.5rem; color: #fff;
+  font-size: 2vw;
+  color: #fff;
+`
+const MintControl = styled.div`
+  display: flex;
+  flex: 1;
+  max-height: 3rem;
+  margin-top: 2vh;
+  background: #dd1a1b;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  user-select: none;
+`
+
+const SideAction = styled.button<{ disabled?: boolean }>`
+  flex: 0 0 3rem;
+  height: 3rem;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-family: 'Bangers', cursive;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  &:hover:not(:disabled) {
+    background: rgba(255,255,255,0.1);
+  }
+`
+
+const MintAction = styled.button<{ disabled?: boolean }>`
+  flex: 1;
+  border: none;
+  background: transparent;
+  height: 100%;
+  color: #fff;
+  font-family: 'Bangers', cursive;
+  font-size: 1.25rem;
+  padding: 0 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  &:hover:not(:disabled) {
+    background: rgba(255,255,255,0.15);
+  }
 `
 const NFTPreview = styled.div`
   display: flex; 
@@ -92,7 +121,7 @@ const NFTPreview = styled.div`
   max-width: 30vw;
   max-height: 30vw;
   background: #fff; 
-  border-radius: 1rem; 
+  border-radius: 2rem; 
   overflow: hidden;
   align-items: center; 
   justify-content: center;
@@ -268,33 +297,42 @@ export default function MintPage() {
               }
             </InfoText>
 
-            <QuantityInput
-              type="number"
-              min={1}
-              max={Math.min(availableQuota, rest)}
-              value={quantity}
-              onChange={e => setQuantity(parseInt(e.target.value)||1)}
-            />
+            {/* ─── un seul contrôle “– / Mint / +” ─── */}
+        <MintControl>
+          <SideAction
+            onClick={() => setQuantity(q => Math.max(1, q - 1))}
+            disabled={quantity <= 1 || isMinting || soldOut}
+          >
+            –
+          </SideAction>
 
-            <MintButton
-              onClick={handleMint}
-              disabled={
-                isMinting
-                || isPaused
-                || soldOut
-                || quantity<1
-                || quantity>availableQuota
-              }
-            >
-              { !account
-                  ? "Connect wallet"
-                  : soldOut
-                    ? "Sold out"
-                    : isMinting
-                      ? "Mint in progress..."
-                      : `Mint ${quantity} × ${mintPrice} MON`
-              }
-            </MintButton>
+          <MintAction
+            onClick={handleMint}
+            disabled={
+              isMinting ||
+              isPaused ||
+              soldOut ||
+              quantity < 1 ||
+              quantity > availableQuota
+            }
+          >
+            { !account
+                ? "Connect wallet"
+                : soldOut
+                  ? "Sold out"
+                  : isMinting
+                    ? "Mint…"
+                    : `Mint ${quantity}`
+            }
+          </MintAction>
+
+          <SideAction
+            onClick={() => setQuantity(q => Math.min(availableQuota, q + 1))}
+            disabled={quantity >= availableQuota || isMinting || soldOut}
+          >
+            +
+          </SideAction>
+        </MintControl>
           </InfoContent>
 
           <MintStatusContainer>
