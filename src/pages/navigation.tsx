@@ -170,9 +170,9 @@ const cards = [
     alt: 'Partners'
   },
   {
-    href: '/lore',
+    href: 'https://x.com/monad_bandit/status/1922592726425423935',
     label: 'Lore',
-    src: 'https://x.com/monad_bandit/status/1922592726425423935',
+    src: '/assets/images/navigation_cards/lore.gif',
     alt: 'Lore'
   },
 ]
