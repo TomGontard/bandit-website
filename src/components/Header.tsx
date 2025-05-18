@@ -1,6 +1,7 @@
 // src/components/Header.tsx
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import styled from "styled-components";
 import { ROUTES, EXTERNAL_LINKS } from "../utils/links";
 import { useWeb3Context } from "../context/Web3Context";
@@ -92,7 +93,14 @@ const Socials = styled.div`
     gap: 30vw;
   } 
 `;
-
+const BackButton = styled.button`
+   background: transparent;
+   border: none;
+   padding: 0;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+ `;
 const FaviconLogo = styled.img`
   width: 50%;
   cursor: pointer;
@@ -174,6 +182,7 @@ const ConnectBtn = styled.button<{ connected: boolean }>`
 `
 
 export default function Header() {
+  const router = useRouter();
   const { account, connect, disconnect } = useWeb3Context();
 
   // helper to truncate: 0x + first 4 + … + last 4
@@ -183,12 +192,15 @@ export default function Header() {
   return (
     <Bar>
       <Left>
-        <Link href={ROUTES.HOME}>
+        <BackButton
+          onClick={() => router.back()}
+          aria-label="Go back"
+        >
           <FaviconLogo
             src="/assets/images/logos/logo-bandit-small.png"
             alt="Bandit Icon"
           />
-        </Link>
+        </BackButton>
       </Left>
 
       <Middle>
