@@ -1,5 +1,5 @@
 // src/hooks/useWeb3.ts
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import {
   BrowserProvider,
   JsonRpcProvider,
@@ -9,109 +9,139 @@ import {
 import WalletConnectProvider from '@walletconnect/web3-provider'
 
 declare global {
-  interface Window { ethereum?: Eip1193Provider }
+  interface Window {
+    ethereum?: Eip1193Provider & {
+      on(event: 'chainChanged', listener: (chainId: string) => void): void
+      on(event: 'accountsChanged', listener: (accounts: string[]) => void): void
+      removeListener(event: 'chainChanged', listener: (chainId: string) => void): void
+      removeListener(event: 'accountsChanged', listener: (accounts: string[]) => void): void
+    }
+  }
 }
 
-const MONAD_TESTNET_CHAIN_ID = 10143
+
+export const MONAD_TESTNET_CHAIN_ID = 10143
 const MONAD_TESTNET_RPC      = 'https://testnet-rpc.monad.xyz'
 
-// Alias pour typer proprement les erreurs JSON-RPC
-interface RpcError extends Error { code?: number }
+interface RpcError extends Error {
+  code?: number
+}
 
 export function useWeb3() {
-  const [provider, setProvider] = useState<BrowserProvider | null>(null)
-  const [signer,   setSigner]   = useState<JsonRpcSigner  | null>(null)
-  const [account,  setAccount]  = useState<string          | null>(null)
-  const [chainId,  setChainId]  = useState<number          | null>(null)
+  const [provider, setProvider]   = useState<BrowserProvider | null>(null)
+  const [signer,   setSigner]     = useState<JsonRpcSigner  | null>(null)
+  const [account,  setAccount]    = useState<string          | null>(null)
+  const [chainId,  setChainId]    = useState<number          | null>(null)
+  const [correct,  setCorrect]    = useState<boolean         >(false)
 
-  // Un provider lecture seule, sur ton RPC privé
   const readOnlyProvider = new JsonRpcProvider(
     MONAD_TESTNET_RPC,
     MONAD_TESTNET_CHAIN_ID
   )
 
-  const ensureMonadTestnet = useCallback(
-    async (raw: Eip1193Provider) => {
-      const chainIdHex = `0x${MONAD_TESTNET_CHAIN_ID.toString(16)}`
-      const target = {
-        chainId: chainIdHex,
-        chainName: 'Monad Testnet',
-        rpcUrls: [MONAD_TESTNET_RPC],
-        nativeCurrency: { name: 'MON', symbol: 'MON', decimals: 18 },
-        blockExplorerUrls: ['https://testnet.monadexplorer.com/'],
-      }
+  const switchNetwork = useCallback(async () => {
+    const raw = window.ethereum
+    if (!raw) throw new Error('MetaMask non détecté')
+    const hex = '0x' + MONAD_TESTNET_CHAIN_ID.toString(16)
 
-      try {
+    try {
+      await raw.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: hex }]
+      })
+    } catch (err: unknown) {
+      const rpcErr = err as RpcError
+      if (rpcErr.code === 4902) {
         await raw.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: chainIdHex }]
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId:    hex,
+            chainName:  'Monad Testnet',
+            rpcUrls:    [MONAD_TESTNET_RPC],
+            nativeCurrency: {
+              name:     'tMON',
+              symbol:   'tMON',
+              decimals: 18
+            },
+            blockExplorerUrls: ['https://testnet.monadexplorer.com/']
+          }]
         })
-      } catch (err: unknown) {
-        const rpcErr = err as RpcError
-        if (rpcErr.code === 4902) {
-          // la chaîne n’existe pas dans MetaMask → on l’ajoute
-          await raw.request({
-            method: 'wallet_addEthereumChain',
-            params: [target],
-          })
-        } else {
-          throw err
-        }
-      }
-    },
-    []
-  )
-
-  const connect = useCallback(
-    async (useWalletConnect = false) => {
-      let rawProvider: Eip1193Provider
-
-      if (useWalletConnect) {
-        const wc = new WalletConnectProvider({
-          rpc: { [MONAD_TESTNET_CHAIN_ID]: MONAD_TESTNET_RPC }
-        })
-        await wc.enable()
-        rawProvider = wc as unknown as Eip1193Provider
       } else {
-        const { ethereum } = window
-        if (!ethereum) {
-          throw new Error('MetaMask non détecté')
-        }
-        rawProvider = ethereum
+        throw err
       }
+    }
+  }, [])
 
-      // on est sûr d’être sur la bonne chaîne
-      await ensureMonadTestnet(rawProvider)
+  const connect = useCallback(async (useWalletConnect = false) => {
+    let raw: Eip1193Provider
 
-      // on "wrap" dans un BrowserProvider, en précisant juste le chainId
-      const web3 = new BrowserProvider(rawProvider, MONAD_TESTNET_CHAIN_ID)
-      const s    = await web3.getSigner()
-      const address = await s.getAddress()
-      const network = await web3.getNetwork()
+    if (useWalletConnect) {
+      const wc = new WalletConnectProvider({
+        rpc: { [MONAD_TESTNET_CHAIN_ID]: MONAD_TESTNET_RPC }
+      })
+      await wc.enable()
+      raw = wc as unknown as Eip1193Provider
+    } else {
+      if (!window.ethereum) throw new Error('MetaMask non détecté')
+      raw = window.ethereum
+    }
 
-      setProvider(web3)
-      setSigner(s)
-      setAccount(address)
-      // network.chainId est un bigint → conversion en number
-      setChainId(Number(network.chainId))
-    },
-    [ensureMonadTestnet]
-  )
+    await switchNetwork()
+
+    const web3    = new BrowserProvider(raw, MONAD_TESTNET_CHAIN_ID)
+    const signer  = await web3.getSigner()
+    const addr    = await signer.getAddress()
+    const network = await web3.getNetwork()
+
+    setProvider(web3)
+    setSigner(signer)
+    setAccount(addr)
+    setChainId(Number(network.chainId))
+    setCorrect(network.chainId === BigInt(MONAD_TESTNET_CHAIN_ID))
+  }, [switchNetwork])
 
   const disconnect = useCallback(() => {
     setProvider(null)
     setSigner(null)
     setAccount(null)
     setChainId(null)
+    setCorrect(false)
+  }, [])
+
+  useEffect(() => {
+    const eth = window.ethereum
+    if (!eth) return
+
+    const handleChain    = (hex: string) => {
+      const id = parseInt(hex, 16)
+      setChainId(id)
+      setCorrect(id === MONAD_TESTNET_CHAIN_ID)
+    }
+    const handleAccounts = (accs: string[]) => {
+      setAccount(accs[0] || null)
+    }
+
+    // hydrate l’état
+    eth.request({ method: 'eth_chainId' }).then(handleChain).catch(() => {})
+    eth.request({ method: 'eth_accounts' }).then(handleAccounts).catch(() => {})
+
+    eth.on('chainChanged',    handleChain)
+    eth.on('accountsChanged', handleAccounts)
+    return () => {
+      eth.removeListener('chainChanged',    handleChain)
+      eth.removeListener('accountsChanged', handleAccounts)
+    }
   }, [])
 
   return {
     provider,
     signer,
-    readOnlyProvider,  // si tu en as besoin ailleurs
+    readOnlyProvider,
     account,
     chainId,
+    isCorrectNetwork: correct,
     connect,
+    switchNetwork,
     disconnect,
   }
 }

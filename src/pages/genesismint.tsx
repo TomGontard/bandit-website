@@ -19,24 +19,35 @@ const PageContainer = styled.div`
 `
 
 const InfoCard = styled.div`
-  flex:3; min-width:35vw; background:rgba(255,255,255,0.1);
-  border-radius:1rem; border-bottom-left-radius:7.5vw;
-  border-bottom-right-radius:7.5vw; overflow:hidden;
-  display:flex; flex-direction:column;
+  flex:3; 
+  min-width:35vw; 
+  background:rgba(255,255,255,0.1);
+  border-radius:1rem; 
+  border-bottom-left-radius:7.5vw;
+  border-bottom-right-radius:7.5vw; 
+  overflow:hidden;
+  display:flex; 
+  flex-direction:column;
 `
 
 const InfoContent = styled.div`
-  flex:1; padding:2vh 2vw; color:#fff;
-  display:flex; flex-direction:column;
+  display:flex; 
+  flex-direction:column;
+  flex:1; 
+  padding:2vh 2vw; 
+  color:#fff;
 `
 
 const InfoTitle = styled.h1`
   font-family:'Permanent Marker',cursive;
-  font-size:3vw; text-align:center; margin-bottom:1vh;
+  font-size:3vw; 
+  text-align:center; 
+  margin-bottom:1vh;
 `
 
 const InfoText = styled.p`
-  font-size:1.5vw; line-height:1.6;
+  font-size: 1.75vw; 
+  line-height:1.6;
 `
 
 const MintStatusContainer = styled.div`
@@ -49,23 +60,37 @@ const MintStatus = styled.div`
 `
 
 const MintControl = styled.div`
-  display:flex; height:3rem; margin-top:auto;
-  background:#dd1a1b; border-radius:0.5rem; overflow:hidden;
+  display:flex; 
+  height:3rem; 
+  margin-top:auto;
+  margin-bottom:0.5vh;
+  background:#dd1a1b; 
+  border-radius:0.5rem; 
+  overflow:hidden;
   user-select:none;
 `
 
 const SideAction = styled.button<{ disabled?:boolean }>`
-  flex:0 0 3rem; border:none; background:transparent;
-  color:#fff; font-family:'Bangers',cursive; font-size:1.5rem;
-  cursor:pointer; transition:background .2s;
+  flex:0 0 3rem; 
+  border:none; background:transparent;
+  color:#fff; 
+  font-family:'Bangers',cursive; 
+  font-size:2.5rem;
+  cursor:pointer; 
+  transition:background .2s;
   &:disabled { opacity:.3; cursor:default }
   &:hover:not(:disabled){ background:rgba(255,255,255,.1) }
 `
 
 const MintAction = styled.button<{ disabled?:boolean }>`
-  flex:1; border:none; background:transparent; color:#fff;
-  font-family:'Bangers',cursive; font-size:1.25rem;
-  cursor:pointer; transition:background .2s;
+  flex:1; 
+  border:none; 
+  background:transparent; 
+  color:#fff;
+  font-family:'Bangers',cursive; 
+  font-size: 1.75vw;
+  cursor:pointer; 
+  transition:background .2s;
   &:disabled { opacity:.5; cursor:default }
   &:hover:not(:disabled){ background:rgba(255,255,255,.15) }
 `

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import styled from "styled-components";
 import { ROUTES, EXTERNAL_LINKS } from "../utils/links";
 import { useWeb3Context } from "../context/Web3Context";
+import { MONAD_TESTNET_CHAIN_ID } from "../hooks/useWeb3";
 
 
 /** Styled-components */
@@ -134,12 +135,12 @@ const SocialIcon = styled.img`
     }
 `;
 
-const ConnectBtn = styled.button<{ connected: boolean }>`
+const ConnectBtn = styled.button<{ state: "no"|"wrong"|"ok" }>`
   position: relative;
   width: 16vw;
   height: 16vh;
   background: url(${p =>
-    p.connected
+    p.state === "ok"
       ? "/assets/images/connectedWallet.png"
       : "/assets/images/connectWallet.png"}) no-repeat center/contain;
   border: none;
@@ -178,16 +179,39 @@ const ConnectBtn = styled.button<{ connected: boolean }>`
     &:hover {
       transform: scale(1.2);
     }
-  }
+  } 
 `
 
 export default function Header() {
-  const router = useRouter();
-  const { account, connect, disconnect } = useWeb3Context();
+  const router = useRouter()
+  const { account, chainId, connect, switchNetwork, disconnect } = useWeb3Context()
 
-  // helper to truncate: 0x + first 4 + … + last 4
-  const truncated = (addr: string) =>
-    `${addr.slice(0, 6)}…${addr.slice(addr.length - 4)}`;
+  // Safe truncate: si addr est nullish, retourne ""
+  const truncated = (addr?: string | null) =>
+    addr ? `${addr.slice(0,6)}…${addr.slice(-4)}` : ""
+
+  // Détermine l’état du bouton
+  let btnState: "no"|"wrong"|"ok" = "no"
+  if (account) {
+    btnState = chainId === MONAD_TESTNET_CHAIN_ID ? "ok" : "wrong"
+  }
+
+  // Label adapté
+  const label =
+    btnState === "no"    ? "Connect wallet" :
+    btnState === "wrong" ? "Switch network" :
+                           truncated(account)
+
+  // Action unique
+  const handleClick = () => {
+    if (btnState === "no") {
+      connect(false)         // connect MetaMask
+    } else if (btnState === "wrong") {
+      switchNetwork()        // ajoute/switch le réseau
+    } else {
+      disconnect()           // déconnecte
+    }
+  }
 
   return (
     <Bar>
@@ -237,11 +261,8 @@ export default function Header() {
           </Link>
         </Socials>
 
-        <ConnectBtn
-          connected={!!account}
-          onClick={account ? disconnect : () => connect(false)}
-        >
-          {account ? truncated(account) : "Connect wallet"}
+        <ConnectBtn state={btnState} onClick={handleClick}>
+          {label}
         </ConnectBtn>
       </Right>
     </Bar>
