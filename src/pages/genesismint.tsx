@@ -6,9 +6,9 @@ import { useWeb3Context } from "../context/Web3Context"
 import { Contract, formatEther, parseEther } from "ethers"
 import { SIMPLE_MINT_ABI } from "../utils/abi"
 
-const CONTRACT_ADDRESS = "0x6E344310B5B745abBA057607A9B0baa1C571c322"
+const CONTRACT_ADDRESS = "0x15C7930AFcdB533fe1c158B2B7FB98733535A9f9"
 const MAX_SUPPLY       = 999
-const BATCH_COUNT      = 10
+const BATCH_COUNT      = 12
 const BATCH_DURATION   = 3600 // sec = 1h
 
 /** Styled-components **/
