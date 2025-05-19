@@ -26,7 +26,8 @@ const PageContainer = styled.div`
   @media (max-width:1023px){
     flex-direction:column-reverse;
     align-items:center;      /* centre les deux blocs */
-    gap: 5vw;
+    gap: 4vw;
+    padding: 2vh;
   }
 `
 
@@ -54,6 +55,9 @@ const InfoContent = styled.div`
   flex:1; 
   padding:2vh 2vw; 
   color:#fff;
+  @media (max-width:1023px){
+    padding: 2vh 2vw 1.5vh;
+  }
 `
 
 const InfoTitle = styled.h1`
@@ -103,7 +107,7 @@ const MintControl = styled.div`
   user-select:none;
   @media (max-width:1023px){
     height:2rem;
-    margin-top:1vh;
+    margin-bottom:0;
   }
 `
 
@@ -151,8 +155,8 @@ const NFTPreview = styled.div`
   justify-content:center;
   @media (max-width:1023px){
     flex:1;
-    width: 67.5vw;
-    height: 67.5vw;
+    width: 65vw;
+    height: 65vw;
   }
 `
 
