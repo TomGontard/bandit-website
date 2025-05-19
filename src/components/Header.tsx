@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { ROUTES, EXTERNAL_LINKS } from "../utils/links";
 import { useWeb3Context } from "../context/Web3Context";
 import { MONAD_TESTNET_CHAIN_ID } from "../hooks/useWeb3";
+import Head from "next/head";
 
 
 /** Styled-components */
@@ -220,13 +221,13 @@ export default function Header() {
 
   return (
     <Bar>
-      <head>
+      <Head>
         <link rel="icon" href="/assets/images/logos/logo-bandit-small.png" type="image/png" sizes="any" />
         <title>Bandit • Genesis Mint</title>
 
         <meta name="description" content="Mint the Bandit Genesis Pass on Monad testnet" />
         <meta name="theme-color" content="#000000" />
-      </head>
+      </Head>
       <Left>
         <BackButton
           onClick={() => router.back()}
