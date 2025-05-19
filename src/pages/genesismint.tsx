@@ -13,9 +13,21 @@ const BATCH_DURATION   = 3600 // sec = 1h
 
 /** Styled-components **/
 const PageContainer = styled.div`
-  display: flex; gap: 10vw; justify-content: center;
+  display: flex; 
+  gap: 10vw; 
+  justify-content: center;
   padding: 5vh 10vw;
-  @media (min-width:1024px){ flex-wrap:nowrap }
+  /* desktop : disposition côte-à-côte */
+  @media (min-width:1024px){
+    flex-direction:row;
+  }
+
+  /* mobile : on empile, l’image d’abord */
+  @media (max-width:1023px){
+    flex-direction:column-reverse;
+    align-items:center;      /* centre les deux blocs */
+    gap: 5vw;
+  }
 `
 
 const InfoCard = styled.div`
@@ -28,6 +40,12 @@ const InfoCard = styled.div`
   overflow:hidden;
   display:flex; 
   flex-direction:column;
+  @media (max-width:1023px){
+    flex:1;
+    min-width: 65vw;
+    border-bottom-left-radius:15vw;
+    border-bottom-right-radius:15vw;
+  }
 `
 
 const InfoContent = styled.div`
@@ -43,20 +61,35 @@ const InfoTitle = styled.h1`
   font-size:3vw; 
   text-align:center; 
   margin-bottom:1vh;
+  @media (max-width:1023px){
+    font-size: 6vw;
+  }
 `
 
 const InfoText = styled.p`
   font-size: 1.75vw; 
   line-height:1.6;
+  @media (max-width:1023px){
+    font-size: 5vw;
+  }
 `
 
 const MintStatusContainer = styled.div`
-  background:#6b4bf5; padding:2.5vh 0; text-align:center;
-  border-bottom-left-radius:40vw; border-bottom-right-radius:40vw;
+  background:#6b4bf5; 
+  padding:2.5vh 0; 
+  text-align:center;
+  border-bottom-left-radius:40vw; 
+  border-bottom-right-radius:40vw;
+  @media (max-width:1023px){
+    padding:2vh 0;
+  }
 `
 
 const MintStatus = styled.div`
   font-size:2vw; color:#fff;
+  @media (max-width:1023px){
+    font-size: 6vw;
+  }
 `
 
 const MintControl = styled.div`
@@ -68,6 +101,10 @@ const MintControl = styled.div`
   border-radius:0.5rem; 
   overflow:hidden;
   user-select:none;
+  @media (max-width:1023px){
+    height:2rem;
+    margin-top:1vh;
+  }
 `
 
 const SideAction = styled.button<{ disabled?:boolean }>`
@@ -80,6 +117,10 @@ const SideAction = styled.button<{ disabled?:boolean }>`
   transition:background .2s;
   &:disabled { opacity:.3; cursor:default }
   &:hover:not(:disabled){ background:rgba(255,255,255,.1) }
+  @media (max-width:1023px){
+    font-size: 1.5rem;
+    flex:0 0 2.5rem;
+  }
 `
 
 const MintAction = styled.button<{ disabled?:boolean }>`
@@ -93,16 +134,32 @@ const MintAction = styled.button<{ disabled?:boolean }>`
   transition:background .2s;
   &:disabled { opacity:.5; cursor:default }
   &:hover:not(:disabled){ background:rgba(255,255,255,.15) }
+  @media (max-width:1023px){
+    font-size: 5vw;
+  }
 `
 
 const NFTPreview = styled.div`
-  flex:2; min-width:20vw; min-height:20vw; background:#fff;
-  border-radius:2rem; overflow:hidden;
-  display:flex; align-items:center; justify-content:center;
+  flex:2; 
+  min-width:20vw; 
+  min-height:20vw; 
+  background:#fff;
+  border-radius:2rem; 
+  overflow:hidden;
+  display:flex; 
+  align-items:center; 
+  justify-content:center;
+  @media (max-width:1023px){
+    flex:1;
+    width: 67.5vw;
+    height: 67.5vw;
+  }
 `
 
 const PreviewImage = styled.img`
-  width:100%; height:100%; object-fit:cover;
+  width:100%; 
+  height:100%; 
+  object-fit:cover;
 `
 
 /** Component **/
@@ -216,6 +273,10 @@ export default function MintPage() {
   const upcoming = batchQuotas
     .map((q,i)=>({ batch:i+1, quota:q }))
     .filter(x=> x.quota>0 && now < startTime + x.batch*BATCH_DURATION)[0]
+    const unitPriceNum  = parseFloat(price || "0")
+    const totalCost     = (unitPriceNum * qty).toLocaleString(undefined, {
+        maximumFractionDigits: 1
+    })
 
   return (
     <Layout>
@@ -266,7 +327,7 @@ export default function MintPage() {
                       ? "Sold out"
                       : isMinting
                         ? "Minting…"
-                        : `Mint ${qty}`
+                        : `${qty} x Mint (${totalCost} $MON)`
                 }
               </MintAction>
 

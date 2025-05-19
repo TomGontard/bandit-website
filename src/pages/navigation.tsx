@@ -18,11 +18,12 @@ const Title = styled.h2`
   z-index: 5;
 
   @media (max-width: 768px) {
-    font-size: 5vw;
-    margin: 2.5%;
+    font-size: 7vw;
+    margin-top: 8.5vh;
+    margin-bottom: 4vh;
   }
   @media (min-width: 768px) and (max-width: 1024px) {
-    margin: 6vh 1vw 0vh;
+    margin: 6vh 1vw 2vh;
     font-size: 5vw;
   }
   @media (min-width: 1024px) and (max-width: 1600px) {
