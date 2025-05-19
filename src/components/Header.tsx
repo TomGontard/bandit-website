@@ -165,7 +165,7 @@ const ConnectBtn = styled.button<{ state: "no"|"wrong"|"ok" }>`
     height: 17vh;
     font-size: 4.25vw;
     position: absolute;
-    top: 20vw;
+    top: 17vw;
     &:hover {
       transform: scale(1.15);
     }

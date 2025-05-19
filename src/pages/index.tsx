@@ -60,7 +60,7 @@ const ButtonWrapper = styled.div<{ exiting?: boolean }>`
   }
 
   @media (min-width: 640px) and (max-width: 1024px) {
-    bottom: 60%;
+    bottom: 55%;
   }
   @media (min-width: 1024px) and (max-width: 1600px) {
     font-size: 50px;
@@ -103,11 +103,6 @@ const BlurImage = styled.img`
   width: 174%;
   height: auto;
   object-fit: fill;
-  @media (max-width: 375px) {
-    top: -125%;
-    left: 52.5%;
-    z-index:6;
-  }
   @media (min-width:376) and (max-width: 640px) {
     top: -125%;
     left: 52.5%;
@@ -171,8 +166,9 @@ const Subtitle = styled.p`
     font-size: 17.5px;
     padding: 0 2.5%;
     z-index: 11;
+    top: 10%;
   }
-  @media (min-width: 375px) and (max-width: 640px) {
+  @media (min-width: 376px) and (max-width: 640px) {
     font-size: 17.5px;
     top: 2%;
     padding: 0 2.5%;
@@ -180,13 +176,14 @@ const Subtitle = styled.p`
   @media (min-width: 640px) and (max-width: 850px) {
     font-size: 30px;
     padding: 0 2.5%;
+    top: 5%;
   }
   @media (min-width: 850px) and (max-width: 1024px) {
     font-size: 32.5px;
     padding: 0 2.5%;
-    top: 5%;
+    top: 11%;
   }
-  @media (min-width: 1024px) and (max-width: 1600px) {
+  @media (min-width: 1025px) and (max-width: 1600px) {
     font-size: 45px;
     top: 6.5%;
   }
@@ -274,18 +271,18 @@ const bandits: BanditPos[] = [
     src: '/assets/images/bandits/BANDIT1.png',
     alt: 'Bandit 1',
     delay: 500,
-    smsize: '275px',
-    smleft: '-10%',
-    smbottom: '25%',
+    smsize: '300px',
+    smleft: '-11%',
+    smbottom: '16%',
     mdSize: '550px',
     mdLeft: '42.5%',
     mdBottom: '12.5%',
     lgSize: '400px',
     lgLeft: '-2.5%',
-    lgBottom: '15%',
+    lgBottom: '25%',
     xlSize: '525px',
     xlLeft: '-2.5%',
-    xlBottom: '15%',
+    xlBottom: '25%',
     zIndex: 4,
     visibleAt: ['sm', 'md', 'lg', 'xl'],
   },
@@ -293,18 +290,18 @@ const bandits: BanditPos[] = [
     src: '/assets/images/bandits/BANDIT2.png',
     alt: 'Bandit 2',
     delay: 1000,
-    smsize: '225px',
-    smleft: '47.5%',
-    smbottom: '55%',
+    smsize: '275px',
+    smleft: '42%',
+    smbottom: '50%',
     mdSize: '550px',
     mdLeft: '15%',
     mdBottom: '45%',
     lgLeft: '17%',
-    lgBottom: '15%',
+    lgBottom: '22.5%',
     lgSize: '350px',
     xlSize: '450px',
-    xlLeft: '17%',
-    xlBottom: '17.5%',
+    xlLeft: '17.5%',
+    xlBottom: '22.5%',
     zIndex: 2,
     visibleAt: ['sm', 'md', 'lg', 'xl'],
   },
@@ -312,39 +309,39 @@ const bandits: BanditPos[] = [
     src: '/assets/images/bandits/BANDIT3.png',
     alt: 'Bandit 3',
     delay: 0,
-    smsize: '250px',
-    smleft: '42.5%',
-    smbottom: '22.5%',
+    smsize: '275px',
+    smleft: '40%',
+    smbottom: '15%',
     mdSize: '120%',
     mdLeft: '40%',
     mdBottom: '-525%',
     lgSize: '400px',
     lgLeft: '36.5%',
-    lgBottom: '15%',
+    lgBottom: '25%',
     xlSize: '550px',
     xlLeft: '35%',
-    xlBottom: '20%',
+    xlBottom: '22.5%',
     zIndex: 3,
-    visibleAt: ['sm', 'md', 'lg', 'xl'],
+    visibleAt: ['sm', 'lg', 'xl'],
   },
   {
     src: '/assets/images/bandits/BANDIT4.png',
     alt: 'Bandit 4',
     delay: 1000,
-    smsize: '250px',
+    smsize: '275px',
     mdSize: '120px',
-    smleft: '-5%',
-    smbottom: '60%',
+    smleft: '-12.5%',
+    smbottom: '50%',
     mdLeft: '50%',
     mdBottom: '0',
     lgSize: '350px',
     lgLeft: '60%',
-    lgBottom: '15%',
+    lgBottom: '22.5%',
     xlSize: '475px',
-    xlLeft: '55%',
-    xlBottom: '20%',
+    xlLeft: '58.5%',
+    xlBottom: '22.5%',
     zIndex: 1,
-    visibleAt: ['sm', 'md', 'lg', 'xl'],
+    visibleAt: ['sm', 'lg', 'xl'],
   },
   {
     src: '/assets/images/bandits/BANDIT5.png',
@@ -353,15 +350,15 @@ const bandits: BanditPos[] = [
     smsize: '80px',
     smleft: '50%',
     mdSize: '500px',
-    mdLeft: '-10%',
-    mdBottom: '12.5%',
+    mdLeft: '-7.5%',
+    mdBottom: '17.5%',
     smbottom: '0',
     lgSize: '350px',
     lgLeft: '78%',
-    lgBottom: '15%',
+    lgBottom: '25%',
     xlSize: '500px',
-    xlLeft: '76%',
-    xlBottom: '20%',
+    xlLeft: '77.5%',
+    xlBottom: '22.5%',
     zIndex: 5,
     visibleAt: ['md', 'lg', 'xl'],
   }
