@@ -220,6 +220,13 @@ export default function Header() {
 
   return (
     <Bar>
+      <head>
+        <link rel="icon" href="/assets/images/logos/logo-bandit-small.png" type="image/png" sizes="any" />
+        <title>Bandit • Genesis Mint</title>
+
+        <meta name="description" content="Mint the Bandit Genesis Pass on Monad testnet" />
+        <meta name="theme-color" content="#000000" />
+      </head>
       <Left>
         <BackButton
           onClick={() => router.back()}
