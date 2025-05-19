@@ -9,14 +9,14 @@ import rightArrow from '../../public/assets/images/right-arrow.svg'
 
 const ArrowButton = styled.button<{ left?: boolean }>`
   position: absolute;
-  top: 37.5%;
-  ${({ left }) => (left ? 'left: 2vw;' : 'right: 5vw;')}
+  top: 38.5%;
+  ${({ left }) => (left ? 'left: 1vw;' : 'right: 6vw;')}
   transform: translateY(-50%);
   background: transparent;
   border: none;
-  width: 6vw;    
-  cursor: pointer;
-  z-index: 20;
+  width: 10vw;    
+  cursor: pointer
+  z-index: 1000;
   @media (min-width: 640px) { display: none; }   /* ➜ TABLET & DESKTOP : caché */
 `
 
@@ -41,6 +41,7 @@ const Title = styled.h2`
   font-family: 'Bangers', cursive;
   @media (max-width: 1024px) {
     font-size: 10vw;
+    margin-top: 7.5vh;
   }
 `
 
@@ -49,6 +50,8 @@ const CarouselWrapper = styled.div`
   justify-content: center;
   align-items: center;
   padding-top: 10vh;
+  @media (max-width: 640px) {
+    padding-top: 12vh;
 `
 
 const Inner = styled.div<{ transitioning: boolean }>`
