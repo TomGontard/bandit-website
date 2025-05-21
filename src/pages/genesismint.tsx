@@ -299,19 +299,24 @@ export default function MintPage() {
 
             <InfoText>
               Price per mint : <strong>{price} $MON</strong><br/>
-              Your whitelists on launch : <strong>{launchQty}</strong><br/>
+              { paused
+                  ? <>Your whitelists on launch : <strong>{launchQty}</strong><br /></>
+              : !paused && !soldOut
+                  ? <>Your whitelists left : {availQty}</>
+              : soldOut
+                  ? <>Collection sold out</>
+                  : null }
               {/* ----- message dynamique FCFS / batches ------------------ */}
               { paused && fcfsBatch
                   ? <>You have an additionnal <strong>FCFS&nbsp;WL</strong> that will let you mint
-                      <br/>another NFT <strong>{fcfsBatch} h</strong> after launch.</>
+                      another NFT <strong>{fcfsBatch} h</strong> after launch.</>
               : !paused && !soldOut && fcfsBatch && secondsToFCFS > 0
                   ? <>Your FCFS whitelist activates in&nbsp;
                       <strong>{hrs} h {mins} min</strong>.</>
               : !paused && !soldOut && fcfsBatch && secondsToFCFS <= 0
-                  ? <>Your FCFS whitelist quota has now been added to your mintable
-                      amount!</>
+                  ? null
               : soldOut
-                  ? <>Sold&nbsp;out</>
+                  ? null
                   : null }
 
             </InfoText>
