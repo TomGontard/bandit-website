@@ -6,7 +6,7 @@ import { useWeb3Context } from "../context/Web3Context"
 import { Contract, formatEther, parseEther } from "ethers"
 import { SIMPLE_MINT_ABI } from "../utils/abi"
 
-const CONTRACT_ADDRESS = "0x15C7930AFcdB533fe1c158B2B7FB98733535A9f9"
+const CONTRACT_ADDRESS = "0xC82f152Ba13e4bB1a41BEf7E1e8Fbe67d5403c9f"
 const MAX_SUPPLY       = 999
 const BATCH_COUNT      = 12
 const BATCH_DURATION   = 3600 // sec = 1h
@@ -153,6 +153,7 @@ const NFTPreview = styled.div`
   display:flex; 
   align-items:center; 
   justify-content:center;
+  border:0.5vh solid hsl(0, 0.00%, 100.00%);
   @media (max-width:1023px){
     flex:1;
     width: 65vw;
@@ -273,14 +274,19 @@ export default function MintPage() {
   // –– calculs d’affichage
   const soldOut = (MAX_SUPPLY - (minted||0)) <= 0
   const now   = Math.floor(Date.now()/1000)
-  // trouver prochain batch éligible
-  const upcoming = batchQuotas
-    .map((q,i)=>({ batch:i+1, quota:q }))
-    .filter(x=> x.quota>0 && now < startTime + x.batch*BATCH_DURATION)[0]
-    const unitPriceNum  = parseFloat(price || "0")
-    const totalCost     = (unitPriceNum * qty).toLocaleString(undefined, {
+  const unitPriceNum  = parseFloat(price || "0")
+  const totalCost     = (unitPriceNum * qty).toLocaleString(undefined, {
         maximumFractionDigits: 1
     })
+  
+  /* ── FCFS helper ──────────────────────────────────────────────── */
+  // premier batch (>0) dans lequel tu as un quota
+  const fcfsIdx = batchQuotas.findIndex((q, i) => i > 0 && q > 0)   // -1 si aucun
+  const fcfsBatch = fcfsIdx >= 0 ? fcfsIdx + 1 : null
+  const fcfsUnlockTime = fcfsBatch ? startTime + fcfsBatch * BATCH_DURATION : 0
+  const secondsToFCFS  = fcfsUnlockTime - now
+  const hrs   = Math.floor(secondsToFCFS / 3600)
+  const mins  = Math.floor((secondsToFCFS % 3600) / 60)
 
   return (
     <Layout>
@@ -293,26 +299,26 @@ export default function MintPage() {
 
             <InfoText>
               Price per mint : <strong>{price} $MON</strong><br/>
-              Your whitelists on launch : <strong>{launchQty}</strong><br/>
               { paused
-                ? <>Launch in { startTime>now
-                              ? `${Math.ceil((startTime-now)/3600)}h`
-                              : "…"
-                           }</>
-                : soldOut
-                  ? <>Sold out</>
-                  : <>
-                      Eligibility to mint in batch&nbsp;
-                      <strong>
-                        { upcoming
-                            ? `#${upcoming.batch}`
-                            : "— all released"}
-                      </strong><br/>
-                      { upcoming &&
-                        <em>{`(after ${upcoming.batch}h from launch)`}</em>
-                      }
-                    </>
-              }
+                  ? <>Your whitelists on launch : <strong>{launchQty}</strong><br /></>
+              : !paused && !soldOut
+                  ? <>Your whitelists left : {availQty}</>
+              : soldOut
+                  ? <>Collection sold out</>
+                  : null }
+              {/* ----- message dynamique FCFS / batches ------------------ */}
+              { paused && fcfsBatch
+                  ? <>You have an additionnal <strong>FCFS&nbsp;WL</strong> that will let you mint
+                      another NFT <strong>{fcfsBatch} h</strong> after launch.</>
+              : !paused && !soldOut && fcfsBatch && secondsToFCFS > 0
+                  ? <>Your FCFS whitelist activates in&nbsp;
+                      <strong>{hrs} h {mins} min</strong>.</>
+              : !paused && !soldOut && fcfsBatch && secondsToFCFS <= 0
+                  ? null
+              : soldOut
+                  ? null
+                  : null }
+
             </InfoText>
 
             <MintControl>
